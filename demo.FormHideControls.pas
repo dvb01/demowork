@@ -34,6 +34,7 @@ type
     AmCheckBox1: TAmCheckBox;
     AmEdit1: TAmEdit;
     AmCheckBox2: TAmCheckBox;
+    P_PanelSimpleExample: TAmPanel;
   private
     { Private declarations }
   public

@@ -257,12 +257,13 @@ var S:string;
         TamResource.SaveToFile(IndivRes,FnSave);
     end;
 begin
-    LocLoadFile(AmFile.LocalPath + ws_ssl_server_key_fn,'ws_ssl_server_key');
-    LocLoadFile(AmFile.LocalPath + ws_ssl_server_crt_fn,'ws_ssl_server_crt');
-    LocLoadFile(AmFile.LocalPath + ws_ssl_server_root_fn,'ws_ssl_server_root');
-    LocLoadFile(AmFile.LocalPath + 'libeay32.dll','libeay32');
-    LocLoadFile(AmFile.LocalPath + 'ssleay32.dll','ssleay32');
-    LocLoadFile(AmFile.LocalPath + 'libwebp.dll','libwebp');
+    S:= AmFile.LocalPath;
+    LocLoadFile(S + ws_ssl_server_key_fn,'ws_ssl_server_key');
+    LocLoadFile(S + ws_ssl_server_crt_fn,'ws_ssl_server_crt');
+    LocLoadFile(S + ws_ssl_server_root_fn,'ws_ssl_server_root');
+    LocLoadFile(S + 'libeay32.dll','libeay32');
+    LocLoadFile(S + 'ssleay32.dll','ssleay32');
+    LocLoadFile(S + 'libwebp.dll','libwebp');
 end;
 
 procedure TdMain.VkHttpApiTokenChange(ApiCmdBase: TObject);

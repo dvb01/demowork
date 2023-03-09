@@ -40,7 +40,7 @@ uses
   AmListBox,
   AmGraphic.Controls,
   AmControls,
-  AmHookApp,
+ // AmHookApp,
   AmPtScrollBoxOptimized,
   AmFormJsonResponse,
   AmMemo,
@@ -147,7 +147,6 @@ type
     P_PhotoCollage_CollageSaveToFile: TAmButton;
     P_PhotoCollage_ParserCollage: TAmButton;
     P_PhotoCollage_ExampleShow: TAmButton;
-    P_PanelSimpleExample: TAmPanel;
 
     procedure FormCreate(Sender: TObject);
     procedure PanelCustomBack(Sender: TObject);
@@ -177,8 +176,6 @@ type
     procedure P_ScrollBoxPto_DeleteClick(Sender: TObject);
     procedure P_ScrollBoxPto_ClearClick(Sender: TObject);
     procedure P_ScrollBoxPto_ScrollPosClick(Sender: TObject);
-    procedure P_PanelSimpleExampleMouseEnter(Sender: TObject);
-    procedure P_PanelSimpleExampleMouseLeave(Sender: TObject);
     procedure FormAlignPosition(Sender: TWinControl; Control: TControl;
       var NewLeft, NewTop, NewWidth, NewHeight: Integer; var AlignRect: TRect;
       AlignInfo: TAlignInfo);
@@ -634,16 +631,6 @@ end;
 procedure TFormMain.PanGalaryMenu_PhotoCollageClick(Sender: TObject);
 begin
     PanelOpen(P_PhotoCollage);
-end;
-
-procedure TFormMain.P_PanelSimpleExampleMouseEnter(Sender: TObject);
-begin
-   P_PanelSimpleExample.TransparentLevel:=255;
-end;
-
-procedure TFormMain.P_PanelSimpleExampleMouseLeave(Sender: TObject);
-begin
-   P_PanelSimpleExample.TransparentLevel:=220;
 end;
 
 procedure TFormMain.P_PhotoCollage_CollageSaveToFileClick(Sender: TObject);

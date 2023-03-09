@@ -51,20 +51,26 @@ uses
 
    TdExampleRunBase = class abstract (TAmComponent)
      private
+      function TerminatedGet: boolean;
      protected
       Cmd:TdExampleExecuteCmd;
+      property Terminated: boolean read TerminatedGet;
       procedure Run_Module_PhotoCollage;virtual;abstract;
+      procedure Run_Module_ScrollBoxPto;virtual;abstract;
      public
       constructor Create(AOwner:TComponent); override;
       destructor Destroy;override;
       procedure Run;virtual;
       procedure BeforeDestruction; override;
    end;
+
    TdExampleRunSimple = class (TdExampleRunBase)
      private
      protected
         procedure Run_Module_PhotoCollage;override;
         procedure Run_Module_PhotoCollage_LoadFile;
+
+        procedure Run_Module_ScrollBoxPto;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -75,13 +81,12 @@ uses
        FPanelLock:TAmLayout;
        FCursor:TdPanelExampleCursor;
        procedure MainFormResize(S:TObject);
-       function GetBoundsAtForm(F:TForm;C:TControl):TAmBounds;
-       function CursorMoveToControl(F:TForm;C:TControl):boolean;
-       function CursorEffectClick:boolean;
-       function TerminatedGet: boolean;
+       function GetPoint(C:TControl):TPoint;
      protected
+        function CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
+
         procedure Run_Module_PhotoCollage;override;
-        property Terminated: boolean read TerminatedGet;
+        procedure Run_Module_ScrollBoxPto;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -134,12 +139,20 @@ begin
   inherited;
 end;
 
+function TdExampleRunBase.TerminatedGet: boolean;
+begin
+ Result:=self.GetThreadTerminated;
+end;
+
+
 procedure TdExampleRunBase.Run;
 var P:TWinControl;
 begin
     P:=FormMain.PanelShowCurrent;
     if P = FormMain.P_PhotoCollage then
       Run_Module_PhotoCollage
+    else if P = FormMain.P_ScrollBoxPto then
+      Run_Module_ScrollBoxPto
 end;
 
 { TdExampleRunPlayer }
@@ -148,18 +161,17 @@ constructor TdExampleRunPlayer.Create(AOwner:TComponent);
 begin
   inherited;
    FPanelLock:=TAmLayout.Create(Self);
-   FPanelLock.TransparentLevel:=20;
+   FPanelLock.TransparentLevel:=10;
    FPanelLock.BevelOuter:=bvnone;
+  // FPanelLock.Color:=clblack;
    FPanelLock.Parent:= FormMain;
 
 
    FCursor:= TdPanelExampleCursor.Create(self);
-   FCursor.Color:=clred;
-   FCursor.TransparentLevel:=220;
-   FCursor.BevelOuter:=bvnone;
-   FCursor.Color:=$008080FF;
-   FCursor.SetBounds(FormMain.Width div 2 - 15,FormMain.Height div 2 - 15,30,30);
-   FCursor.Parent:= FormMain;
+   FCursor.Color:= $008080FF;
+   FCursor.TransparentLvl:=220;
+   FCursor.PenSize:=5;
+   FCursor.CursorShow;
    FormMain.OnResizeSub(MainFormResize);
    MainFormResize(self);
 end;
@@ -172,89 +184,132 @@ begin
   inherited;
 end;
 
-function TdExampleRunPlayer.GetBoundsAtForm(F: TForm; C: TControl): TAmBounds;
-var P:TPoint;
+function TdExampleRunPlayer.GetPoint(C:TControl):TPoint;
 begin
-   P:=C.ClientToParent(Point(0,0),F);
-   Result.BoundsControlSet(C);
-   Result.Left:= P.X;
-   Result.Top:=  P.Y;
+   Result:= Cmd.GetPoint(C);
 end;
 
 procedure TdExampleRunPlayer.MainFormResize(S: TObject);
 begin
    FPanelLock.SetBounds(0,0,FormMain.Width,FormMain.Height);
    FPanelLock.BringToFront;
-   FCursor.BringToFront;
 end;
 
-function TdExampleRunPlayer.CursorMoveToControl(F:TForm;C:TControl):boolean;
-var B:TAmBounds;
+function TdExampleRunPlayer.CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
+var
+  I: Integer;
 begin
-   B:=GetBoundsAtForm(F,C);
-   Result:=Cmd.MouseMove(FCursor,B.Rect.CenterPoint,100);
-   if not Result or self.Terminated then exit(false);   
+   for I := 0 to 2 do
+   begin
+     Result:=Cmd.MouseMove(FCursor.CursorLayer,GetPoint(C),120);
+     if not Result or self.Terminated then exit;
+   end;
 
-   B:=GetBoundsAtForm(F,C);
-   Cmd.MouseMove(FCursor,B.Rect.CenterPoint,100);
-   if not Result or self.Terminated then exit(false);
+   Result:=Cmd.Delay(500);
+   if not Result then
+   exit;
 
-   B:=GetBoundsAtForm(F,C);
-   Cmd.MouseMove(FCursor,B.Rect.CenterPoint,100);
-   if not Result or self.Terminated then exit(false);
+   if EffectClick and not Cmd.MouseClick(FCursor.CursorLayer,$008080FF,$00AAF170) then
+   exit(false);
+
+   if (Caption<>'') and not Cmd.ShowMessage(Caption,C,2000) then
+    exit(false);
    Result:=true;
 end;
 
-function TdExampleRunPlayer.CursorEffectClick:boolean;
-begin
-   Result:= Cmd.MouseClick(FCursor,$008080FF,$00AAF170);
-end;
-
 procedure TdExampleRunPlayer.Run_Module_PhotoCollage;
+var R:boolean;
 begin
    MainFormResize(self);
-   Cmd.MouseToCenterParent(FCursor);
+   Cmd.MouseTo(FCursor.CursorLayer,GetPoint(FormMain));
 
-   if not CursorMoveToControl(FormMain,FormMain.P_PhotoCollage_FileListClear) then
-   exit;
-   if not Cmd.Delay(500) then
-   exit;
-   if not CursorEffectClick then
-   exit;
-   Cmd.ButtonClick(FormMain.P_PhotoCollage_FileListClear);
-   if not Cmd.Delay(500) then
+
+
+   R:= CallMove(FormMain.P_PhotoCollage_FileListClear,true,'Очистить список файлов');
+   if not R then exit;
+   R:= Cmd.ButtonClick(FormMain.P_PhotoCollage_FileListClear) and  Cmd.Delay(500);
+   if not  R then
    exit;
 
 
-   if not CursorMoveToControl(FormMain,FormMain.P_PhotoCollage_FileAdd) then
-    exit;
-   if not Cmd.Delay(500) then
-    exit;
-   if not CursorEffectClick then
-   exit;
+
+   R:= CallMove(FormMain.P_PhotoCollage_FileAdd,true,'Добавить новые файлы');
+   if not R then exit;
    Run_Module_PhotoCollage_LoadFile;
-   if not Cmd.Delay(500) then
-    exit;
+   R:= Cmd.Delay(500);
+   if not R then
+   exit;
 
-   if not CursorMoveToControl(FormMain,FormMain.P_PhotoCollage_FileList) then
-    exit;
-   if not Cmd.Delay(1000) then
-    exit;
+   R:= CallMove(FormMain.P_PhotoCollage_FileList,false,'При необходимости удалить не нужные файлы');
+   if not R then exit;
 
+   R:= CallMove(FormMain.P_PhotoCollage_Collage,false,'Посмотреть результат');
+   if not R then exit;
 
-   if not CursorMoveToControl(FormMain,FormMain.P_PhotoCollage_Collage) then
-    exit;
-   if not Cmd.Delay(1000) then
-    exit;
+   R:= CallMove(FormMain.P_PhotoCollage_CollageSaveToFile,false,'При необходимости сохранить картинку');
+   if not R then exit;
+
+    R:= CallMove(FormMain.P_PhotoCollage_ParserCollage,false,'Посмотреть поля объекта');
+   if not R then exit;
+
+    R:= CallMove(FormMain.P_PhotoCollage_ExampleShow,false,'Воспроизвести подсказку заново');
+   if not R then exit;
 end;
 
-function TdExampleRunPlayer.TerminatedGet: boolean;
+procedure TdExampleRunPlayer.Run_Module_ScrollBoxPto;
+var R:boolean;
+S:string;
 begin
- Result:=self.GetThreadTerminated;
+   MainFormResize(self);
+   Cmd.MouseTo(FCursor.CursorLayer,GetPoint(FormMain));
+
+   R:= CallMove(FormMain.P_ScrollBoxPto_Clear,true,'Очистить список');
+   if not R then exit;
+   R:= Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Clear) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+
+   R:= CallMove(FormMain.P_ScrollBoxPto_AddCountValue,true,'Указать кол-во добавляемых элементов');
+   if not R then exit;
+   R:= Cmd.EditSetText(FormMain.P_ScrollBoxPto_AddCountValue,'500000') and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormMain.P_ScrollBoxPto_Add,true,'Добавить элементы в ScrollBox');
+   if not R then exit;
+   R:= Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Add) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormMain.P_ScrollBoxPto_Panel,false,'');
+   if not R then exit;
+
+   S:='Протестируйте ScrollBox!'+#13#10+
+   '1. Изменяйте размер элементов.'  +#13#10+
+   '2. Перетаскивайте элементы.'  +#13#10+
+   '3. Скрольте выбирая скрости прокрутки.'  +#13#10+
+   #13#10+
+   'Откройте окно настроек скрол бара, нажав на него ПКМ.'
+
+   ;
+   R:= Cmd.ShowMessage(S,FormMain.P_ScrollBoxPto_Panel,12000);
+   if not R then exit;
+
+
+   exit;
+   Cmd.EditSetText(FormMain.P_ScrollBoxPto_DeleteIndexValue,'0');
+   Cmd.delay(50);
+   Cmd.EditSetText(FormMain.P_ScrollBoxPto_ScrollPosValue,'0');
+   Cmd.delay(50);
+
+
+
+   Cmd.CheckBoxSet(FormMain.P_ScrollBoxPto_ScrollPosIsAnimated,false);
+   Cmd.delay(50);
+   Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Add);
+
 end;
-
-
-
 
 { TdExampleRunSimple }
 
@@ -271,8 +326,24 @@ end;
 procedure TdExampleRunSimple.Run_Module_PhotoCollage;
 begin
   Cmd.ButtonClick(FormMain.P_PhotoCollage_FileListClear);
-  Cmd.delay(100);
+  Cmd.delay(50);
   Run_Module_PhotoCollage_LoadFile;
+end;
+
+procedure TdExampleRunSimple.Run_Module_ScrollBoxPto;
+begin
+   Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Clear);
+   Cmd.delay(50);
+   Cmd.EditSetText(FormMain.P_ScrollBoxPto_AddCountValue,'500000');
+   Cmd.delay(50);
+   Cmd.EditSetText(FormMain.P_ScrollBoxPto_DeleteIndexValue,'0');
+   Cmd.delay(50);
+   Cmd.EditSetText(FormMain.P_ScrollBoxPto_ScrollPosValue,'0');
+   Cmd.delay(50);
+   Cmd.CheckBoxSet(FormMain.P_ScrollBoxPto_ScrollPosIsAnimated,false);
+   Cmd.delay(50);
+   Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Add);
+
 end;
 
 procedure TdExampleRunSimple.Run_Module_PhotoCollage_LoadFile;

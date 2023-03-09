@@ -18,7 +18,7 @@ object FormHideControls: TFormHideControls
     Top = 0
     Width = 942
     Height = 605
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -32,7 +32,7 @@ object FormHideControls: TFormHideControls
         Top = 35
         Width = 514
         Height = 510
-        Color = 11099700
+        Color = 4016910
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -41,6 +41,32 @@ object FormHideControls: TFormHideControls
         Indent = 19
         ParentFont = False
         TabOrder = 0
+      end
+      object P_PanelSimpleExample: TAmPanel
+        Left = 762
+        Top = 69
+        Width = 108
+        Height = 41
+        Visible = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        BevelWidth = 3
+        Caption = #1055#1088#1080#1084#1077#1088
+        GrandientOpt.Active = True
+        GrandientOpt.Kind = amgrRadial
+        GrandientOpt.Color1 = 4227072
+        GrandientOpt.Color2 = 11452183
+        GrandientOpt.Radius = 444
+        ColorBolder = 8453888
+        ColorBolder2 = 8453888
+        TransparentLevel = 220
+        VisibleDelay = 500
+        VisibleCountFrame = 30
       end
     end
     object TabSheet3: TTabSheet
@@ -64,8 +90,6 @@ object FormHideControls: TFormHideControls
         BevelOuter = bvNone
         Caption = ''
         VisibleTyp = waBLEND
-        ExplicitWidth = 1091
-        ExplicitHeight = 624
         object Label6: TLabel
           AlignWithMargins = True
           Left = 3
@@ -112,8 +136,6 @@ object FormHideControls: TFormHideControls
           TabOrder = 0
           BevelOuter = bvNone
           Caption = ''
-          ExplicitWidth = 1026
-          ExplicitHeight = 511
           object AmLayout8: TAmLayout
             Left = 0
             Top = 321
@@ -124,8 +146,6 @@ object FormHideControls: TFormHideControls
             TabOrder = 0
             BevelOuter = bvNone
             Caption = ''
-            ExplicitTop = 368
-            ExplicitWidth = 1026
             object AmMemo1: TAmMemo
               AlignWithMargins = True
               Left = 0
@@ -154,10 +174,10 @@ object FormHideControls: TFormHideControls
               ParentFont = False
               TabOrder = 0
               WordWrap = False
-              ScrollVert.Left = 846
+              ScrollVert.Left = 842
               ScrollVert.Top = 0
-              ScrollVert.Width = 13
-              ScrollVert.Height = 115
+              ScrollVert.Width = 17
+              ScrollVert.Height = 111
               ScrollVert.ATheme.CanOpenEditor = True
               ScrollVert.ATheme.AStyle = btmDefault
               ScrollVert.ATheme.AStyleColor = btcWhite
@@ -205,11 +225,10 @@ object FormHideControls: TFormHideControls
               ScrollVert.Max = 2
               ScrollVert.PageSize = 5
               ScrollVert.Align = alRight
-              ScrollVert.ExplicitLeft = 1003
               ScrollHorz.Left = 0
-              ScrollHorz.Top = 115
+              ScrollHorz.Top = 111
               ScrollHorz.Width = 859
-              ScrollHorz.Height = 13
+              ScrollHorz.Height = 17
               ScrollHorz.ATheme.CanOpenEditor = True
               ScrollHorz.ATheme.AStyle = btmDefault
               ScrollHorz.ATheme.AStyleColor = btcWhite
@@ -256,15 +275,13 @@ object FormHideControls: TFormHideControls
               ScrollHorz.Position = 0
               ScrollHorz.Min = 0
               ScrollHorz.Max = 65535
-              ScrollHorz.PageSize = 982
+              ScrollHorz.PageSize = 821
               ScrollHorz.Align = alBottom
-              ScrollHorz.ExplicitWidth = 1016
               MarginsText.Left = 10
               MarginsText.Top = 10
               MarginsText.Right = 10
               MarginsText.Bottom = 10
               ColorMargins = clBlack
-              ExplicitWidth = 1016
             end
           end
           object AmLayout9: TAmLayout
@@ -2755,7 +2772,6 @@ object FormHideControls: TFormHideControls
             Edit.ParentFont = False
             Edit.TabOrder = 0
             Edit.Text = 'Edit'
-            Edit.ExplicitWidth = 179
             EditMargins.Left = 5
             EditMargins.Top = 2
             EditMargins.Right = 3

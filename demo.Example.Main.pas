@@ -39,7 +39,7 @@ uses
   AmListBox,
   AmGraphic.Controls,
   AmControls,
-  AmHookApp,
+ // AmHookApp,
   AmPtScrollBoxOptimized,
   demo.Types,
   demo.Consts,
@@ -136,11 +136,7 @@ function  TdExample.ExampleDialogCanAnimation:boolean;
 var P:TWinControl;
 begin
     P:=Form.PanelShowCurrent;
-    Result:= (P = Form.P_PhotoCollage)
-    //or (P = Form.P_ApiVk)
-    or (P = Form.P_WebSocket)
-    or (P = Form.P_ScrollBoxPto);
-
+    Result:= P <> Form.P_Main;
     Result:= Result and amDialog.Confirm('С анимацией?');
    // Result := Result and amDialog.Confirm('Программу нельзя будет закрыть 30 сек. пока проигрывается анимация.  Вы согласны?');
 end;

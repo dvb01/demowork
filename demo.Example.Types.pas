@@ -40,6 +40,8 @@ uses
   AmGraphic.Controls,
   AmControls,
   AmHookApp,
+  AmLayCursor,
+  AmGraphic.Canvas.Help,
   AmPtScrollBoxOptimized,
   demo.Types,
   demo.Consts;
@@ -62,13 +64,15 @@ uses
 
   end;
 
-  TdPanelExampleCursor = class (TAmLayout)
+  TdPanelExampleCursor = class (TAmCursorImit)
     private
-      procedure CreateRound;
+    FCursorColor: TColor;
+    procedure CursorColorSet(const Value: TColor);
     protected
-      procedure SetParent(W:TWinControl);override;
-      procedure Paint;override;
-      procedure Resize;override;
+      procedure Paint(Sender:TObject;Canvas:TCanvas;Rect:TRect;Var CanContinue:boolean);override;
+    public
+      constructor Create(AOwner:TComponent);override;
+    published
   end;
 
 
@@ -193,35 +197,32 @@ end;
 
 { TdPanelExampleCursor }
 
-procedure TdPanelExampleCursor.CreateRound;
-var
-  R: TRect;
-  Rgn: HRGN;
-begin
-      R := ClientRect;
-      rgn := CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, Width-5, Height-5);
-      Perform(EM_GETRECT, 0, lParam(@r));
-      InflateRect(r, - 5, - 5);
-      Perform(EM_SETRECTNP, 0, lParam(@r));
-      SetWindowRgn(Handle, rgn, True);
-end;
 
-procedure TdPanelExampleCursor.Paint;
-begin
-    inherited;
-end;
 
-procedure TdPanelExampleCursor.Resize;
+
+constructor TdPanelExampleCursor.Create(AOwner: TComponent);
 begin
   inherited;
-  CreateRound
+  //Color:=$008080FF;;
+  //Color:=clgray;
+  //self.TransparentColor:=clgray;
+  //self.TransparentLevel:=120;
+  //self.BevelOuter:=bvNone;
+  //self.IsDrawHelper:=false;
 end;
 
-procedure TdPanelExampleCursor.SetParent(W: TWinControl);
+
+procedure TdPanelExampleCursor.CursorColorSet(const Value: TColor);
 begin
-    inherited;
-    if W <> nil then
-    CreateRound;
+  FCursorColor := Value;
+end;
+
+procedure TdPanelExampleCursor.Paint(Sender:TObject;Canvas:TCanvas;Rect:TRect;Var CanContinue:boolean);
+begin
+ //Canvas.Brush.Color:= clred;
+ //Canvas.Brush.Style:=bsSolid;
+ //Canvas.FillRect(self.ClientRect);
+ //AmGraphicCanvasHelp.CanvasPaintCircleMark(Canvas,self.ClientRect,clgreen,5,5);
 end;
 
 end.
