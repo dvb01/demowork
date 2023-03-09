@@ -51,31 +51,35 @@ uses
 
   TdExample = class (TComponent)
     private
-      FPanelExample:TdPanelExample;
+      FButRun:TdButRunExample;
       FListRegistryNoShow:TList;
+      FExampleStarted:integer;
+      FLossFocusApp:boolean;
       procedure MainFormResize(S:TObject);
       procedure AppicationHook(var Msg: TMsg; var Handled: Boolean);
+      function AppicationHookWindow(var Msg: TMessage):Boolean;
       procedure PanelHideCheckHandle(Handle:Cardinal);
 
-      procedure PanelHide;
-      procedure PanelShow;
-      function PanelShowingGet: boolean;
-      function PanelGet: TControl;
-      procedure PanelClick(Sender:TObject);
+      procedure ButRunHide;
+      procedure ButRunShow;
+      function ButRunShowingGet: boolean;
+      function ButRunGet: TControl;
+      procedure ButRunClick(Sender:TObject);
       function  ExampleDialogCanAnimation:boolean;
       procedure ExampleStart;
       procedure ExampleRun(AClass:TdExampleRunBaseClass);
       procedure ExampleRunGetTerminated(S:Tobject;var IsNeedBreak:boolean);
+
     protected
 
     public
-      property PanelShowing: boolean read PanelShowingGet;
+      property ButRun: TControl read ButRunGet;
+      property ButRunShowing: boolean read ButRunShowingGet;
       procedure PanelShowCheck(APanelShowing:TWinControl);
       procedure PanelInRegistry(W:TWinControl);
       procedure PanelOutRegistry(W:TWinControl);
       procedure PanelHideCheck(IsRegistry:boolean);
-      procedure PanelAlignCustomize(var NewLeft, NewTop, NewWidth, NewHeight: Integer; var AlignRect: TRect; AlignInfo: TAlignInfo);
-      property Panel: TControl read PanelGet;
+      property  ExampleStarted: integer read FExampleStarted;
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
   end;
@@ -104,14 +108,14 @@ begin
   raise Exception.Create('Error TdExample.Create дубликат');
   inherited Create(AOwner as TFormMain);
   FExample:=self;
+  FExampleStarted:=0;
+  FLossFocusApp:=false;
   FListRegistryNoShow:=TList.Create;
-  FPanelExample:=TdPanelExample.Create(self);
-  FPanelExample.Width:= 108;
-  FPanelExample.Height:= 41;
-  FPanelExample.SetSubComponent(true);
-  FPanelExample.Parent:= AOwner as TFormMain;
-  FPanelExample.OnClick:= PanelClick;
+  FButRun:=TdButRunExample.Create(self);
+  FButRun.Parent:= AOwner as TFormMain;
+  FButRun.OnClick:= ButRunClick;
   AmHookAppication.Subscribe(self,AppicationHook);
+  AmHookAppication.HookWindowSubscribe(AppicationHookWindow);
   Form.OnResizeSub(MainFormResize);
 end;
 
@@ -119,7 +123,8 @@ destructor TdExample.Destroy;
 begin
   Form.OnResizeUnSub(MainFormResize);
   AmHookAppication.UnSubscribe(self,AppicationHook);
-  PanelHide;
+  AmHookAppication.HookWindowUnSubscribe(AppicationHookWindow);
+  ButRunHide;
   FreeAndNil(FListRegistryNoShow);
   FExample:=nil;
   inherited;
@@ -127,8 +132,8 @@ end;
 
 procedure TdExample.MainFormResize(S:TObject);
 begin
-    if FPanelExample.Visible then
-    FPanelExample.AlignBoundsCenter;
+    if FButRun.Visible then
+    FButRun.AlignBoundsCustom;
 end;
 
 
@@ -145,17 +150,28 @@ procedure TdExample.ExampleStart;
 begin
   if ( Form = nil )
   or (Form.PanelShowCurrent = nil)
-  or (Form.PanelShowCurrent = Form.P_Main) then
+  or (Form.PanelShowCurrent = Form.P_Main)
+  or (FExampleStarted >0) then
    exit;
-
-  DemoMain.AppCloseLock;
-  try
-   if ExampleDialogCanAnimation then
-      ExampleRun(TdExampleRunPlayer)
-   else ExampleRun(TdExampleRunSimple);
-  finally
-   DemoMain.AppCloseUnLock;
-  end;
+    ButRunHide;
+    try
+      FLossFocusApp:=false;
+      DemoMain.AppCloseLock;
+      try
+         inc(FExampleStarted);
+         try
+           if ExampleDialogCanAnimation then
+              ExampleRun(TdExampleRunPlayer)
+           else ExampleRun(TdExampleRunSimple);
+         finally
+           dec(FExampleStarted);
+         end;
+      finally
+       DemoMain.AppCloseUnLock;
+      end;
+    finally
+      ButRunShow;
+    end;
 end;
 
 procedure TdExample.ExampleRun(AClass:TdExampleRunBaseClass);
@@ -172,31 +188,40 @@ end;
 
 procedure TdExample.ExampleRunGetTerminated(S:Tobject;var IsNeedBreak:boolean);
 begin
-  IsNeedBreak:=DemoMain.AppCloseTerminated;
+  IsNeedBreak:= FLossFocusApp or DemoMain.AppCloseTerminated;
 end;
 
 procedure TdExample.AppicationHook(var Msg: TMsg; var Handled: Boolean);
 begin
-  if AmControlSup.MessageIsCancelModeClickLB(Msg.message) then
+  if ButRunShowing and  AmControlSup.MessageIsCancelModeClickLB(Msg.message) then
   PanelHideCheckHandle(Msg.hwnd);
+  if (FExampleStarted>0) and  AmControlSup.MessageIsLossFocusApplication(Msg.hwnd,Msg.message,Msg.wParam) then
+  FLossFocusApp:=true;
+end;
+
+function TdExample.AppicationHookWindow(var Msg: TMessage):Boolean;
+begin
+  Result:=false;
+  if (FExampleStarted>0) and  AmControlSup.MessageIsLossFocusApplication(0,Msg.Msg,Msg.WParam) then
+  FLossFocusApp:=true;
 end;
 
 
 procedure TdExample.PanelHideCheckHandle(Handle:Cardinal);
 var Panel,ButtonBack:TWinControl;
 begin
-  if (Handle = TLocWinControl(FPanelExample).Handle) then
+  if (Handle = TLocWinControl(FButRun).Handle) then
    exit;
   if (Form.StackPanelCount <= 0) then
   begin
-     PanelHide;
+     ButRunHide;
      exit;
   end;
   Form.PanelShowCurrentPairGet(Panel,ButtonBack);
   if (ButtonBack<>nil)
   and (Handle <> TLocWinControl(ButtonBack).WindowHandle) then
   PanelInRegistry(Panel);
-  PanelHide;
+  ButRunHide;
 end;
 
 procedure TdExample.PanelInRegistry(W:TWinControl);
@@ -220,7 +245,7 @@ begin
    and (APanelShowing <> nil)
    and (APanelShowing <> Form.P_Main)
    and (FListRegistryNoShow.IndexOf(APanelShowing) < 0) then
-    PanelShow;
+    ButRunShow;
 end;
 
 procedure  TdExample.PanelHideCheck(IsRegistry:boolean);
@@ -235,40 +260,34 @@ begin
             FListRegistryNoShow.Add(Panel);
          end;
    end;
-  PanelHide;
+  ButRunHide;
 end;
 
-procedure TdExample.PanelShow;
+procedure TdExample.ButRunShow;
 begin
-   FPanelExample.Visible:=true;
-   FPanelExample.BringToFront;
+   FButRun.Visible:=true;
+   FButRun.BringToFront;
 end;
 
-procedure TdExample.PanelAlignCustomize(var NewLeft, NewTop, NewWidth,
-  NewHeight: Integer; var AlignRect: TRect; AlignInfo: TAlignInfo);
-begin
-   FPanelExample.AlignCustomize(NewLeft,NewTop,NewWidth,NewHeight,AlignRect,AlignInfo);
-end;
-
-procedure TdExample.PanelClick(Sender:TObject);
+procedure TdExample.ButRunClick(Sender:TObject);
 begin
    ExampleStart;
 end;
 
-function TdExample.PanelGet: TControl;
+function TdExample.ButRunGet: TControl;
 begin
-   Result:= FPanelExample;
+   Result:= FButRun;
 end;
 
-procedure TdExample.PanelHide;
+procedure TdExample.ButRunHide;
 begin
-  FPanelExample.Visible:=false;
+  FButRun.Visible:=false;
 end;
 
 
-function TdExample.PanelShowingGet: boolean;
+function TdExample.ButRunShowingGet: boolean;
 begin
- Result:= FPanelExample.Visible;
+ Result:= FButRun.Visible;
 end;
 
 

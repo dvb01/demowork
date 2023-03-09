@@ -56,12 +56,28 @@ uses
       procedure VisibleChanging;override;
       procedure MouseLeave;override;
       procedure MouseEnter;override;
+      procedure MouseEnterTransparentLevel;virtual;
+      procedure MouseLeaveTransparentLevel;virtual;
+      procedure AlignBoundsCenter;
+      procedure AlignBoundsBottom;
     public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
-      procedure AlignBoundsCenter;
-      procedure AlignBoundsCustom;
 
+      procedure AlignBoundsCustom;virtual;
+  end;
+  TdButRunExample = class (TdPanelExample)
+   public
+     constructor Create(AOwner:TComponent);override;
+  end;
+  TdButAbortExample = class (TdPanelExample)
+   private
+   protected
+      procedure MouseEnterTransparentLevel;override;
+      procedure MouseLeaveTransparentLevel;override;
+   public
+     constructor Create(AOwner:TComponent);override;
+     procedure AlignBoundsCustom;override;
   end;
 
   TdPanelExampleCursor = class (TAmCursorImit)
@@ -147,14 +163,24 @@ end;
 
 procedure TdPanelExample.MouseEnter;
 begin
-  inherited;
-  TransparentLevel:=255;
+  MouseEnterTransparentLevel;
+  inherited MouseEnter;
+end;
+
+procedure TdPanelExample.MouseEnterTransparentLevel;
+begin
+   TransparentLevel:=255;
 end;
 
 procedure TdPanelExample.MouseLeave;
 begin
-  inherited;
-  TransparentLevel:=220;
+  MouseLeaveTransparentLevel;
+  inherited MouseLeave;
+end;
+
+procedure TdPanelExample.MouseLeaveTransparentLevel;
+begin
+   TransparentLevel:=220;
 end;
 
 procedure TdPanelExample.SetParent(W: TWinControl);
@@ -171,6 +197,16 @@ end;
 procedure TdPanelExample.SetPosFerst;
 begin
 
+end;
+
+procedure TdPanelExample.AlignBoundsBottom;
+begin
+   if (Parent = nil) then exit;
+   self.SetBounds(
+         Parent.Width div 2 - self.Width div 2,
+         (Parent.Height - Parent.Height div 10) - self.Height ,
+         Width,
+         Height);
 end;
 
 procedure TdPanelExample.AlignBoundsCenter;
@@ -193,6 +229,50 @@ begin
   inherited;
   if not Visible then
   AlignBoundsCustom;
+end;
+
+
+{ TdButRunExample }
+
+constructor TdButRunExample.Create(AOwner: TComponent);
+begin
+  inherited;
+  Width:= 108;
+  Height:= 41;
+end;
+
+{ TdButAbortExample }
+
+
+
+constructor TdButAbortExample.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  GrandientOpt.Active := True;
+  GrandientOpt.Color1 := $002E2E81;
+  GrandientOpt.Color2 := $005360FD;
+  GrandientOpt.Radius := 440;
+  ColorBolder := $008080FF;
+  ColorBolder2 := $008080FF;
+  TransparentLevel := 120;
+  self.Caption:='Отмена';
+  Width:= 108;
+  Height:= 41;
+end;
+
+procedure TdButAbortExample.AlignBoundsCustom;
+begin
+  AlignBoundsBottom;
+end;
+
+procedure TdButAbortExample.MouseEnterTransparentLevel;
+begin
+  TransparentLevel:=255;
+end;
+
+procedure TdButAbortExample.MouseLeaveTransparentLevel;
+begin
+  TransparentLevel:=120;
 end;
 
 { TdPanelExampleCursor }
@@ -224,5 +304,7 @@ begin
  //Canvas.FillRect(self.ClientRect);
  //AmGraphicCanvasHelp.CanvasPaintCircleMark(Canvas,self.ClientRect,clgreen,5,5);
 end;
+
+
 
 end.

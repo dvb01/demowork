@@ -1,7 +1,6 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  OnAlignPosition = FormAlignPosition
   Caption = 'FormMain'
   ClientHeight = 624
   ClientWidth = 1091
@@ -11684,68 +11683,6 @@ object FormMain: TFormMain
         Caption = ''
       end
     end
-    object P_WebSocket: TAmPanel
-      Left = 0
-      Top = 0
-      Width = 1091
-      Height = 624
-      Visible = False
-      Align = alClient
-      Color = 7223856
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = 16431008
-      Font.Height = -19
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 3
-      BevelOuter = bvNone
-      Caption = ''
-      VisibleTyp = waBLEND
-      object Label7: TLabel
-        AlignWithMargins = True
-        Left = 3
-        Top = 58
-        Width = 1085
-        Height = 23
-        Margins.Top = 10
-        Align = alTop
-        Alignment = taCenter
-        Caption = 'Web Socket'
-        Color = 7223856
-        ParentColor = False
-        ExplicitWidth = 99
-      end
-      object P_WebSocket_Back: TAmButton
-        AlignWithMargins = True
-        Left = 10
-        Top = 10
-        Width = 1071
-        Height = 28
-        Margins.Left = 10
-        Margins.Top = 10
-        Margins.Right = 10
-        Margins.Bottom = 10
-        Align = alTop
-        Color = 7223856
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 16777088
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        OnClick = P_WebSocket_BackClick
-        Bolder.Color = 16361617
-        Bolder.BolderSize = 2
-        Bolder.BolderSizeMove = 2
-        Caption = #1053#1072#1079#1072#1076
-        Ico.SizeProcent = 50
-        Ico.Offset.Top = -5
-        Ico.SizeFix = 0
-        Ico.PosH = tvphCentr
-      end
-    end
     object P_PhotoCollage: TAmPanel
       Left = 0
       Top = 0
@@ -12896,6 +12833,68 @@ object FormMain: TFormMain
         end
       end
     end
+    object P_WebSocket: TAmPanel
+      Left = 0
+      Top = 0
+      Width = 1091
+      Height = 624
+      Visible = False
+      Align = alClient
+      Color = 7223856
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 16431008
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      BevelOuter = bvNone
+      Caption = ''
+      VisibleTyp = waBLEND
+      object Label7: TLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 58
+        Width = 1085
+        Height = 23
+        Margins.Top = 10
+        Align = alTop
+        Alignment = taCenter
+        Caption = 'Web Socket'
+        Color = 7223856
+        ParentColor = False
+        ExplicitWidth = 99
+      end
+      object P_WebSocket_Back: TAmButton
+        AlignWithMargins = True
+        Left = 10
+        Top = 10
+        Width = 1071
+        Height = 28
+        Margins.Left = 10
+        Margins.Top = 10
+        Margins.Right = 10
+        Margins.Bottom = 10
+        Align = alTop
+        Color = 7223856
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 16777088
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        OnClick = P_WebSocket_BackClick
+        Bolder.Color = 16361617
+        Bolder.BolderSize = 2
+        Bolder.BolderSizeMove = 2
+        Caption = #1053#1072#1079#1072#1076
+        Ico.SizeProcent = 50
+        Ico.Offset.Top = -5
+        Ico.SizeFix = 0
+        Ico.PosH = tvphCentr
+      end
+    end
     object P_ScrollBoxPto: TAmPanel
       Left = 0
       Top = 0
@@ -13077,7 +13076,7 @@ object FormMain: TFormMain
             object P_ScrollBoxPto_Add: TAmButton
               AlignWithMargins = True
               Left = 284
-              Top = 39
+              Top = 41
               Width = 55
               Height = 38
               Hint = #1053#1072#1089#1090#1088#1086#1081#1082#1080
@@ -13297,7 +13296,7 @@ object FormMain: TFormMain
             object P_ScrollBoxPto_ScrollPosValue: TAmEdit
               Left = 26
               Top = 206
-              Width = 250
+              Width = 252
               Height = 38
               Color = 5318944
               Font.Charset = DEFAULT_CHARSET
@@ -13331,7 +13330,7 @@ object FormMain: TFormMain
               EditMargins.Right = 3
               OnEditCheckNewText = P_ScrollBoxPto_EditNumberCheckEditCheckNewText
               DesignSize = (
-                250
+                252
                 38)
             end
             object P_ScrollBoxPto_ScrollPos: TAmButton
@@ -13661,7 +13660,7 @@ object FormMain: TFormMain
             object P_ScrollBoxPto_DeleteIndexValue: TAmEdit
               Left = 26
               Top = 110
-              Width = 250
+              Width = 252
               Height = 38
               Color = 5318944
               Font.Charset = DEFAULT_CHARSET
@@ -13695,13 +13694,13 @@ object FormMain: TFormMain
               EditMargins.Right = 3
               OnEditCheckNewText = P_ScrollBoxPto_EditNumberCheckEditCheckNewText
               DesignSize = (
-                250
+                252
                 38)
             end
             object P_ScrollBoxPto_AddCountValue: TAmEdit
               Left = 26
               Top = 41
-              Width = 250
+              Width = 252
               Height = 38
               Color = 5318944
               Font.Charset = DEFAULT_CHARSET
@@ -13735,7 +13734,7 @@ object FormMain: TFormMain
               EditMargins.Right = 3
               OnEditCheckNewText = P_ScrollBoxPto_EditNumberCheckEditCheckNewText
               DesignSize = (
-                250
+                252
                 38)
             end
             object P_ScrollBoxPto_ScrollPosIsAnimated: TAmCheckBox
@@ -13771,7 +13770,7 @@ object FormMain: TFormMain
           BevelInner = bvNone
           BevelOuter = bvNone
           BorderStyle = bsNone
-          Color = 5778976
+          Color = 5844511
           Ctl3D = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = 16431008

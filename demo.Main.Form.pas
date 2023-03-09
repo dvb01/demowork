@@ -176,9 +176,6 @@ type
     procedure P_ScrollBoxPto_DeleteClick(Sender: TObject);
     procedure P_ScrollBoxPto_ClearClick(Sender: TObject);
     procedure P_ScrollBoxPto_ScrollPosClick(Sender: TObject);
-    procedure FormAlignPosition(Sender: TWinControl; Control: TControl;
-      var NewLeft, NewTop, NewWidth, NewHeight: Integer; var AlignRect: TRect;
-      AlignInfo: TAlignInfo);
     procedure FormResize(Sender: TObject);
     procedure P_PhotoCollage_ExampleShowClick(Sender: TObject);
   private
@@ -225,14 +222,6 @@ implementation
    demo.Module.WebSocket.Form;
 {$R *.dfm}
 
-procedure TFormMain.FormAlignPosition(Sender: TWinControl; Control: TControl;
-  var NewLeft, NewTop, NewWidth, NewHeight: Integer; var AlignRect: TRect;
-  AlignInfo: TAlignInfo);
-begin
-  if (FExample<>nil) and (Control = FExample.Panel) then
-  FExample.PanelAlignCustomize(NewLeft,NewTop,NewWidth,NewHeight,AlignRect,AlignInfo);
-end;
-
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
 
@@ -263,6 +252,7 @@ begin
    AmUserType.AmSystemInfo.ReportMemory(true);
    FClosingProcess:=false;
    P_ApiVk_MemoLog.Text:='';
+   P_ScrollBoxPto_Log.Text:='';
    FChangeSettingLock:=0;
    FStackPanel:=TdStackPanel.Create;
    P_Main.Visible:=true;

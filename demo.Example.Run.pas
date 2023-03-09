@@ -57,6 +57,9 @@ uses
       property Terminated: boolean read TerminatedGet;
       procedure Run_Module_PhotoCollage;virtual;abstract;
       procedure Run_Module_ScrollBoxPto;virtual;abstract;
+      procedure Run_Module_WebSocket;virtual;
+      procedure Run_Module_WebSocket_Local;virtual;abstract;
+      procedure Run_Module_WebSocket_Remote;virtual;abstract;
      public
       constructor Create(AOwner:TComponent); override;
       destructor Destroy;override;
@@ -71,6 +74,8 @@ uses
         procedure Run_Module_PhotoCollage_LoadFile;
 
         procedure Run_Module_ScrollBoxPto;override;
+        procedure Run_Module_WebSocket_Local;override;
+        procedure Run_Module_WebSocket_Remote;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -80,13 +85,19 @@ uses
      private
        FPanelLock:TAmLayout;
        FCursor:TdPanelExampleCursor;
+       FButAbort:TdButAbortExample;
+       FButAbortClicked:boolean;
+       procedure ButAbortClick(S:TObject);
        procedure MainFormResize(S:TObject);
        function GetPoint(C:TControl):TPoint;
      protected
-        function CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
+       function GetThreadTerminated():boolean; override;
+       function CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
 
-        procedure Run_Module_PhotoCollage;override;
-        procedure Run_Module_ScrollBoxPto;override;
+       procedure Run_Module_PhotoCollage;override;
+       procedure Run_Module_ScrollBoxPto;override;
+       procedure Run_Module_WebSocket_Local;override;
+       procedure Run_Module_WebSocket_Remote;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -131,6 +142,7 @@ begin
   inherited;
 end;
 
+
 procedure TdExampleRunBase.BeforeDestruction;
 begin
   if FCurrentRun <> self then
@@ -153,6 +165,16 @@ begin
       Run_Module_PhotoCollage
     else if P = FormMain.P_ScrollBoxPto then
       Run_Module_ScrollBoxPto
+    else if P = FormMain.P_WebSocket then
+      Run_Module_WebSocket
+end;
+
+procedure TdExampleRunBase.Run_Module_WebSocket;
+begin
+    case FormWs.ExampleCasePanelShow of
+        1:Run_Module_WebSocket_Local;
+        2:Run_Module_WebSocket_Remote;
+    end;
 end;
 
 { TdExampleRunPlayer }
@@ -160,6 +182,12 @@ end;
 constructor TdExampleRunPlayer.Create(AOwner:TComponent);
 begin
   inherited;
+   FButAbortClicked:=false;
+   FButAbort:=TdButAbortExample.Create(self);
+   FButAbort.OnClick:= ButAbortClick;
+   FButAbort.Parent:=  FormMain;
+   FButAbort.Visible:=true;
+
    FPanelLock:=TAmLayout.Create(Self);
    FPanelLock.TransparentLevel:=10;
    FPanelLock.BevelOuter:=bvnone;
@@ -181,7 +209,27 @@ begin
    FormMain.OnResizeUnSub(MainFormResize);
    FreeAndNil(FPanelLock);
    FreeAndNil(FCursor);
+   FreeAndNil(FButAbort);
   inherited;
+end;
+
+function  TdExampleRunPlayer.GetThreadTerminated():boolean;
+begin
+    Result:= FButAbortClicked or inherited  GetThreadTerminated;
+end;
+
+procedure TdExampleRunPlayer.ButAbortClick(S:TObject);
+begin
+   FButAbortClicked:=true;
+end;
+
+procedure TdExampleRunPlayer.MainFormResize(S: TObject);
+begin
+   FPanelLock.SetBounds(0,0,FormMain.Width,FormMain.Height);
+   FPanelLock.BringToFront;
+
+   FButAbort.AlignBoundsCustom;
+   FButAbort.BringToFront;
 end;
 
 function TdExampleRunPlayer.GetPoint(C:TControl):TPoint;
@@ -189,11 +237,7 @@ begin
    Result:= Cmd.GetPoint(C);
 end;
 
-procedure TdExampleRunPlayer.MainFormResize(S: TObject);
-begin
-   FPanelLock.SetBounds(0,0,FormMain.Width,FormMain.Height);
-   FPanelLock.BringToFront;
-end;
+
 
 function TdExampleRunPlayer.CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
 var
@@ -311,6 +355,147 @@ begin
 
 end;
 
+procedure TdExampleRunPlayer.Run_Module_WebSocket_Local;
+var R:boolean;
+S:string;
+begin
+   MainFormResize(self);
+   Cmd.MouseTo(FCursor.CursorLayer,GetPoint(FormWs));
+
+
+   R:= CallMove(FormWs.P_Server_Run,true,'Остановить, запустить сервер');
+   if not R then exit;
+
+   if FormWs.ServerActive then
+   R:= Cmd.ButtonClick(FormWs.P_Server_Run) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+
+   R:= CallMove(FormWs.P_Server_SocketClass,true,'Выбрать класс сокета');
+   if not R then exit;
+   R:= Cmd.ComboBoxSetIndex(FormWs.P_Server_SocketClass,1) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Server_Port,true,'Указать порт сервера');
+   if not R then exit;
+   R:= Cmd.EditSetText(FormWs.P_Server_Port,'5756') and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Server_Ssl,true,'');
+   if not R then exit;
+   S:='Использовать ли SSL шифрование между сервером и клиентами';
+   R:=Cmd.ShowMessage(S,FormWs.P_Server_Ssl,4000);
+   if not R then exit;
+
+   R:= Cmd.CheckBoxSet(FormWs.P_Server_Ssl,true) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Server_Run,true,'Запустить сервер');
+   if not R then exit;
+
+   if FormWs.ServerActive then
+   R:= Cmd.ButtonClick(FormWs.P_Server_Run) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   if not FormWs.ServerActive then
+   R:= Cmd.ButtonClick(FormWs.P_Server_Run) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Server_Log,false,'');
+   if not R then exit;
+
+   S:= 'В логах указан порт и класс сервера'+#13#10+
+   'На этот порт можно подключится клиентам';
+   R:=Cmd.ShowMessage(S,FormWs.P_Server_Log,8000);
+   if not R then exit;
+
+
+
+
+
+   R:= CallMove(FormWs,false,'Сейчас настроим клиент');
+   if not R then exit;
+
+
+
+   R:= CallMove(FormWs.P_Client_Connect,true,'');
+   if not R then exit;
+   S:='Остановить, запустить клиент.';
+   R:=Cmd.ShowMessage(S,FormWs.P_Client_Connect,5000);
+   if not R then exit;
+   if FormWs.ClientActive then
+   R:= Cmd.ButtonClick(FormWs.P_Client_Connect) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+
+
+   R:= CallMove(FormWs.P_Client_Class,true,'Выбрать класс сокета');
+   if not R then exit;
+   S:='На сервере и клиенте они должны совпадать';
+   R:=Cmd.ShowMessage(S,FormWs.P_Client_Class,3000);
+   if not R then exit;
+   R:= Cmd.ComboBoxSetIndex(FormWs.P_Client_Class,1) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Client_Url,true,'Указать url подключения');
+   if not R then exit;
+   R:= Cmd.EditSetText(FormWs.P_Client_Url,'https://127.0.0.1:5756') and  Cmd.Delay(500);
+   if not  R then
+   exit;
+   R:= CallMove(FormWs.P_Client_UrlListOpen,true,'Можно выбрать url из списка');
+   if not R then exit;
+
+
+
+   R:= CallMove(FormWs.P_Client_Ssl,true,'');
+   if not R then exit;
+   S:='Требует ли сервер SSL шифрование';
+   R:=Cmd.ShowMessage(S,FormWs.P_Client_Ssl,3000);
+   if not R then exit;
+
+   R:= CallMove(FormWs.P_Client_Connect,true,'Запустить клиент');
+   if not R then exit;
+   if FormWs.ClientActive then
+   R:= Cmd.ButtonClick(FormWs.P_Client_Connect) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+   if not FormWs.ClientActive then
+   R:= Cmd.ButtonClick(FormWs.P_Client_Connect) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+
+   R:= CallMove(FormWs.P_Client_Log,false,'');
+   if not R then exit;
+
+   S:= 'Если клиенту не удалось подключится можете попробовать:'+#13#10+
+   '1. Нажать отключится а затем подключится'+#13#10+
+   '2. Убрать галочку Ssl шифрование'+#13#10+
+   '3. Поменять класс сокета.';
+   R:=Cmd.ShowMessage(S,FormWs.P_Client_Log,10000);
+   if not R then exit;
+
+   S:='После удачного запуска клиент и сервер могут отправлять друг другу сообщения';
+   R:=Cmd.ShowMessage(S,FormWs.P_Client_Log,5000);
+   if not R then exit;
+
+
+end;
+
+procedure TdExampleRunPlayer.Run_Module_WebSocket_Remote;
+begin
+  inherited;
+
+end;
+
 { TdExampleRunSimple }
 
 constructor TdExampleRunSimple.Create(AOwner: TComponent);
@@ -343,6 +528,18 @@ begin
    Cmd.CheckBoxSet(FormMain.P_ScrollBoxPto_ScrollPosIsAnimated,false);
    Cmd.delay(50);
    Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Add);
+
+end;
+
+
+
+procedure TdExampleRunSimple.Run_Module_WebSocket_Local;
+begin
+
+end;
+
+procedure TdExampleRunSimple.Run_Module_WebSocket_Remote;
+begin
 
 end;
 

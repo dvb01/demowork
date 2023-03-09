@@ -35,7 +35,6 @@ object FormWebSocket: TFormWebSocket
     OnAlignPosition = P_MainAlignPosition
     BevelOuter = bvNone
     Caption = ''
-    ExplicitWidth = 933
     object P_Client: TAmLayout
       Left = 8
       Top = 3
@@ -62,7 +61,6 @@ object FormWebSocket: TFormWebSocket
         TabOrder = 0
         BevelOuter = bvNone
         Caption = ''
-        ExplicitLeft = 20
         DesignSize = (
           445
           265)
@@ -179,7 +177,6 @@ object FormWebSocket: TFormWebSocket
           Button.Bolder.ColorActive = 44223
           Button.Caption = ''
           Button.Ico.SizeProcent = 100
-          Button.ExplicitWidth = 409
           DropListBox.Left = 0
           DropListBox.Top = 0
           DropListBox.Width = 121
@@ -255,7 +252,6 @@ object FormWebSocket: TFormWebSocket
           DropListBox.ScrollV.Max = 210
           DropListBox.ScrollV.PageSize = 97
           DropListBox.ScrollVNotVisible = False
-          ExplicitWidth = 409
         end
         object P_Client_Url: TAmEdit
           Left = 10
@@ -288,12 +284,10 @@ object FormWebSocket: TFormWebSocket
           Edit.ParentFont = False
           Edit.TabOrder = 0
           Edit.Text = 'Edit'
-          Edit.ExplicitWidth = 350
           EditMargins.Left = 5
           EditMargins.Top = 1
           EditMargins.Right = 3
           OnEditChange = SettingChange
-          ExplicitWidth = 361
           DesignSize = (
             377
             38)
@@ -355,12 +349,10 @@ object FormWebSocket: TFormWebSocket
           Edit.ParentFont = False
           Edit.TabOrder = 0
           Edit.Text = 'Edit'
-          Edit.ExplicitWidth = 398
           EditMargins.Left = 5
           EditMargins.Top = 1
           EditMargins.Right = 3
           OnEditChange = SettingChange
-          ExplicitWidth = 409
           DesignSize = (
             425
             38)
@@ -370,7 +362,7 @@ object FormWebSocket: TFormWebSocket
           Top = 230
           Width = 121
           Height = 27
-          Color = 5526557
+          Color = 5789981
           Font.Charset = DEFAULT_CHARSET
           Font.Color = 14080169
           Font.Height = -13
@@ -411,7 +403,7 @@ object FormWebSocket: TFormWebSocket
           Width = 43
           Height = 38
           Anchors = [akTop, akRight]
-          Color = 5789981
+          Color = 5921565
           Font.Charset = DEFAULT_CHARSET
           Font.Color = 14080169
           Font.Height = -13
@@ -425,7 +417,6 @@ object FormWebSocket: TFormWebSocket
           Bolder.BolderSizeActive = 1
           Caption = '...'
           Ico.SizeProcent = 100
-          ExplicitLeft = 376
         end
       end
       object P_Client_Log: TAmMemo
@@ -443,7 +434,7 @@ object FormWebSocket: TFormWebSocket
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
-        Color = 3750163
+        Color = 4013588
         Ctl3D = False
         DoubleBuffered = True
         Font.Charset = DEFAULT_CHARSET
@@ -469,8 +460,6 @@ object FormWebSocket: TFormWebSocket
         ScrollVert.Max = 2
         ScrollVert.PageSize = 15
         ScrollVert.Align = alRight
-        ScrollVert.ExplicitLeft = 396
-        ScrollVert.ExplicitHeight = 259
         ScrollHorz.Left = 0
         ScrollHorz.Top = 263
         ScrollHorz.Width = 425
@@ -483,15 +472,11 @@ object FormWebSocket: TFormWebSocket
         ScrollHorz.Max = 65535
         ScrollHorz.PageSize = 391
         ScrollHorz.Align = alBottom
-        ScrollHorz.ExplicitTop = 259
-        ScrollHorz.ExplicitWidth = 409
         MarginsText.Left = 10
         MarginsText.Top = 10
         MarginsText.Right = 10
         MarginsText.Bottom = 10
         ColorMargins = clBlack
-        ExplicitLeft = 47
-        ExplicitTop = 301
       end
     end
     object P_Server: TAmLayout
@@ -520,7 +505,6 @@ object FormWebSocket: TFormWebSocket
         TabOrder = 0
         BevelOuter = bvNone
         Caption = ''
-        ExplicitLeft = 26
         DesignSize = (
           452
           266)
@@ -600,8 +584,8 @@ object FormWebSocket: TFormWebSocket
           ParentFont = False
         end
         object P_Server_Ssl: TAmCheckBox
-          Left = 8
-          Top = 92
+          Left = 11
+          Top = 91
           Width = 140
           Height = 22
           Color = 3096410
@@ -646,7 +630,6 @@ object FormWebSocket: TFormWebSocket
           Ico.SizeProcent = 60
           Ico.SizeFix = 0
           Ico.PosH = tvphCentr
-          ExplicitLeft = 365
         end
         object P_Server_SocketClass: TAmComboBox
           Left = 11
@@ -689,7 +672,6 @@ object FormWebSocket: TFormWebSocket
           Button.Bolder.ColorActive = 44223
           Button.Caption = ''
           Button.Ico.SizeProcent = 100
-          Button.ExplicitWidth = 249
           DropListBox.Left = 0
           DropListBox.Top = 0
           DropListBox.Width = 121
@@ -765,7 +747,6 @@ object FormWebSocket: TFormWebSocket
           DropListBox.ScrollV.Max = 210
           DropListBox.ScrollV.PageSize = 97
           DropListBox.ScrollVNotVisible = False
-          ExplicitWidth = 258
         end
         object P_Server_Port: TAmEdit
           Left = 303
@@ -801,12 +782,10 @@ object FormWebSocket: TFormWebSocket
           Edit.acColorBad = 2237068
           Edit.acOffon = True
           Edit.acRegular = '\d+'
-          Edit.ExplicitWidth = 91
           EditMargins.Left = 5
           EditMargins.Top = 1
           EditMargins.Right = 3
           OnEditChange = SettingChange
-          ExplicitLeft = 273
           DesignSize = (
             88
             38)
@@ -852,7 +831,6 @@ object FormWebSocket: TFormWebSocket
           Button.Bolder.ColorActive = 44223
           Button.Caption = ''
           Button.Ico.SizeProcent = 100
-          Button.ExplicitWidth = 355
           DropListBox.Left = 0
           DropListBox.Top = 0
           DropListBox.Width = 121
@@ -921,7 +899,6 @@ object FormWebSocket: TFormWebSocket
           DropListBox.ScrollV.Max = 1
           DropListBox.ScrollV.PageSize = 97
           DropListBox.ScrollVNotVisible = False
-          ExplicitWidth = 350
         end
         object P_Server_SendMessageToClient: TAmButton
           Left = 395
@@ -1169,7 +1146,6 @@ object FormWebSocket: TFormWebSocket
             44AE426082}
           Ico.SizeFix = 0
           Ico.PosH = tvphCentr
-          ExplicitLeft = 365
         end
       end
       object P_Server_Log: TAmMemo
@@ -1187,7 +1163,7 @@ object FormWebSocket: TFormWebSocket
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
-        Color = 1778740
+        Color = 1778997
         Ctl3D = False
         DoubleBuffered = True
         Font.Charset = DEFAULT_CHARSET
@@ -1213,8 +1189,6 @@ object FormWebSocket: TFormWebSocket
         ScrollVert.Max = 2
         ScrollVert.PageSize = 14
         ScrollVert.Align = alRight
-        ScrollVert.ExplicitLeft = 389
-        ScrollVert.ExplicitHeight = 321
         ScrollHorz.Left = 0
         ScrollHorz.Top = 258
         ScrollHorz.Width = 432
@@ -1227,16 +1201,11 @@ object FormWebSocket: TFormWebSocket
         ScrollHorz.Max = 65535
         ScrollHorz.PageSize = 398
         ScrollHorz.Align = alBottom
-        ScrollHorz.ExplicitTop = 321
-        ScrollHorz.ExplicitWidth = 402
         MarginsText.Left = 10
         MarginsText.Top = 10
         MarginsText.Right = 10
         MarginsText.Bottom = 10
         ColorMargins = clBlack
-        ExplicitTop = 228
-        ExplicitWidth = 402
-        ExplicitHeight = 334
       end
     end
     object P_Spliter: TAmLayout
@@ -1279,7 +1248,7 @@ object FormWebSocket: TFormWebSocket
       Style = lbOwnerDrawFixed
       Align = alClient
       BorderStyle = bsNone
-      Color = 3750163
+      Color = 3882004
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 14080169
       Font.Height = -13
@@ -1311,10 +1280,6 @@ object FormWebSocket: TFormWebSocket
       ScrollV.Max = 1
       ScrollV.PageSize = 20
       ScrollVNotVisible = False
-      ExplicitLeft = 3
-      ExplicitTop = 3
-      ExplicitWidth = 611
-      ExplicitHeight = 252
     end
   end
   object P_Client_SendPanel: TAmLayout
@@ -1384,8 +1349,6 @@ object FormWebSocket: TFormWebSocket
       ScrollVert.Max = 2
       ScrollVert.PageSize = 7
       ScrollVert.Align = alRight
-      ScrollVert.ExplicitLeft = 396
-      ScrollVert.ExplicitHeight = 259
       ScrollHorz.Left = 0
       ScrollHorz.Top = 140
       ScrollHorz.Width = 403
@@ -1398,15 +1361,11 @@ object FormWebSocket: TFormWebSocket
       ScrollHorz.Max = 65535
       ScrollHorz.PageSize = 369
       ScrollHorz.Align = alBottom
-      ScrollHorz.ExplicitTop = 259
-      ScrollHorz.ExplicitWidth = 409
       MarginsText.Left = 10
       MarginsText.Top = 10
       MarginsText.Right = 10
       MarginsText.Bottom = 10
       ColorMargins = clBlack
-      ExplicitLeft = 20
-      ExplicitWidth = 358
     end
     object P_Client_SendPing: TAmButton
       Left = 10
@@ -1479,9 +1438,6 @@ object FormWebSocket: TFormWebSocket
     TabOrder = 3
     BevelOuter = bvNone
     Caption = ''
-    DesignSize = (
-      423
-      235)
     object Label9: TLabel
       AlignWithMargins = True
       Left = 3
@@ -1541,8 +1497,6 @@ object FormWebSocket: TFormWebSocket
       ScrollVert.Max = 2
       ScrollVert.PageSize = 7
       ScrollVert.Align = alRight
-      ScrollVert.ExplicitLeft = 396
-      ScrollVert.ExplicitHeight = 259
       ScrollHorz.Left = 0
       ScrollHorz.Top = 140
       ScrollHorz.Width = 403
@@ -1555,22 +1509,17 @@ object FormWebSocket: TFormWebSocket
       ScrollHorz.Max = 65535
       ScrollHorz.PageSize = 369
       ScrollHorz.Align = alBottom
-      ScrollHorz.ExplicitTop = 259
-      ScrollHorz.ExplicitWidth = 409
       MarginsText.Left = 10
       MarginsText.Top = 10
       MarginsText.Right = 10
       MarginsText.Bottom = 10
       ColorMargins = clBlack
-      ExplicitLeft = 20
-      ExplicitWidth = 358
     end
     object P_Server_SendText: TAmButton
       Left = 13
       Top = 197
       Width = 130
       Height = 27
-      Anchors = [akTop, akRight]
       Color = 3096410
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 10994394
@@ -1585,6 +1534,99 @@ object FormWebSocket: TFormWebSocket
       Bolder.BolderSizeActive = 1
       Caption = #1058#1077#1082#1089#1090
       Ico.SizeProcent = 60
+      Ico.SizeFix = 0
+      Ico.PosH = tvphCentr
+    end
+  end
+  object P_Example_CasePanel: TAmLayout
+    Left = 424
+    Top = 286
+    Width = 433
+    Height = 222
+    Visible = False
+    Color = 7223856
+    TabOrder = 4
+    BevelOuter = bvNone
+    Caption = ''
+    DesignSize = (
+      433
+      222)
+    object Label11: TLabel
+      AlignWithMargins = True
+      Left = 3
+      Top = 5
+      Width = 427
+      Height = 23
+      Margins.Top = 5
+      Align = alTop
+      Alignment = taCenter
+      Caption = #1050#1072#1082#1086#1081' '#1087#1088#1080#1084#1077#1088' '#1087#1086#1082#1072#1079#1072#1090#1100'?'
+      Color = 3096410
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 16431008
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+      ExplicitWidth = 216
+    end
+    object P_Example_Local: TAmButton
+      AlignWithMargins = True
+      Left = 32
+      Top = 55
+      Width = 169
+      Height = 138
+      Hint = #1053#1072#1089#1090#1088#1086#1081#1082#1080
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      Color = 7223856
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 16431008
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnClick = P_Example_LocalClick
+      Bolder.Color = 16361617
+      Bolder.BolderSizeActive = 1
+      Caption = #1051#1086#1082#1072#1083#1100#1085#1099#1081' '#1089#1077#1088#1074#1077#1088
+      Ico.SizeProcent = 70
+      Ico.SizeFix = 0
+      Ico.PosH = tvphCentr
+    end
+    object P_Example_Remote: TAmButton
+      AlignWithMargins = True
+      Left = 232
+      Top = 55
+      Width = 169
+      Height = 138
+      Hint = #1053#1072#1089#1090#1088#1086#1081#1082#1080
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      Anchors = [akTop, akRight]
+      Color = 7223856
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 16431008
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = P_Example_RemoteClick
+      Bolder.Color = 16361617
+      Bolder.BolderSizeActive = 1
+      Caption = #1059#1076#1072#1083#1077#1085#1085#1099#1081' '#1089#1077#1088#1074#1077#1088
+      Ico.SizeProcent = 70
       Ico.SizeFix = 0
       Ico.PosH = tvphCentr
     end

@@ -79,6 +79,10 @@ type
     Label9: TLabel;
     P_Server_SendMessageText: TAmMemo;
     P_Server_SendText: TAmButton;
+    P_Example_CasePanel: TAmLayout;
+    Label11: TLabel;
+    P_Example_Local: TAmButton;
+    P_Example_Remote: TAmButton;
     procedure P_Client_UrlListOpenClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormHide(Sender: TObject);
@@ -106,6 +110,8 @@ type
     procedure P_Client_UrlListChangeSelect(Sender: TObject);
     procedure P_Server_SendMessageToClientClick(Sender: TObject);
     procedure P_Server_SendTextClick(Sender: TObject);
+    procedure P_Example_LocalClick(Sender: TObject);
+    procedure P_Example_RemoteClick(Sender: TObject);
   private
     { Private declarations }
     FSettingLock:integer;
@@ -113,6 +119,7 @@ type
     FWsServer:TAmWsServerHttpBase;
     FSpliterControlInit:boolean;
     FServerSelectPair:TdWsClientPairCs;
+    FExampleCasePanelShowResult:integer;
 
     procedure WsClientConnect;
     procedure WsClientDisconnect;
@@ -164,9 +171,13 @@ type
     procedure SettingLoad;
     procedure FormIn;
     procedure FormOut;
+    function ClientActiveGet: boolean;
+    function ServerActiveGet: boolean;
   public
     { Public declarations }
-
+     function ExampleCasePanelShow:integer;
+     property ServerActive: boolean read ServerActiveGet;
+     property ClientActive: boolean read ClientActiveGet;
   end;
 
 var
@@ -176,6 +187,40 @@ implementation
   uses demo.Main.Main,demo.FormHideControls;
 {$R *.dfm}
 
+function TFormWebSocket.ExampleCasePanelShow:integer;
+begin
+   FExampleCasePanelShowResult:=0;
+   FormModal.ShowModal(P_Example_CasePanel);
+   Result:=FExampleCasePanelShowResult;
+end;
+
+procedure TFormWebSocket.P_Example_LocalClick(Sender: TObject);
+var F:TAmFormBase;
+begin
+  FExampleCasePanelShowResult:=1;
+  F:= FormModal.ActiveFormBaseGet;
+  if (F <> nil) and (P_Example_CasePanel.Parent = F) then
+  F.Close;
+end;
+
+procedure TFormWebSocket.P_Example_RemoteClick(Sender: TObject);
+var F:TAmFormBase;
+begin
+   FExampleCasePanelShowResult:=2;
+  F:= FormModal.ActiveFormBaseGet;
+  if (F <> nil) and (P_Example_CasePanel.Parent = F) then
+  F.Close;
+end;
+
+function TFormWebSocket.ServerActiveGet: boolean;
+begin
+     Result:= Assigned(FWsServer) and FWsServer.Active;
+end;
+
+function TFormWebSocket.ClientActiveGet: boolean;
+begin
+  Result:=  Assigned(FWsClient) and FWsClient.UserConnected
+end;
 
 procedure TFormWebSocket.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -184,6 +229,7 @@ end;
 
 procedure TFormWebSocket.FormCreate(Sender: TObject);
 begin
+  FExampleCasePanelShowResult:=0;
   FSpliterControlInit:=false;
   FSettingLock:=0;
   FWsClient:=nil;
@@ -238,6 +284,7 @@ begin
 
        P_Server_SocketClass.ItemValueSelected(Server.SocketClass,true);
        P_Server_Port.EditText:= Server.Port.ToString;
+       P_Server_Ssl.Checked := Server.Ssl;
 
   finally
    dec(FSettingLock);
@@ -325,6 +372,8 @@ begin
   P_Client_Url.EditText:= P_Client_UrlList.ItemIndexCaption;
 
 end;
+
+
 
 
 procedure TFormWebSocket.P_Server_ClientListChangeIndex(Sender: TObject; Index: Integer);
@@ -581,6 +630,7 @@ procedure TFormWebSocket.ServerChangedListClientBack(P:IAmPostCustom);
 begin
     ServerChangedListClient(P.Arg[0].AsBoolean,P.Arg[1].AsString,P.Arg[2].AsInteger);
 end;
+
 
 procedure TFormWebSocket.ServerChangedListClient(IsAdder:boolean;PeerIP:string;PeerPort:integer);
 var L:TStrings;
@@ -890,6 +940,7 @@ begin
    P.ArgAdd(msg);
    P.PostMessage;
 end;
+
 
 procedure TFormWebSocket.ClientLogBack(P:IAmPostCustom);
 begin
