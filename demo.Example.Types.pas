@@ -91,6 +91,16 @@ uses
     published
   end;
 
+  TdTimerExampleRun = class(TTimer)
+   private
+     FProc:TNotifyEvent;
+     FPrm:TObject;
+    procedure TimerEvent(S:TObject);
+   public
+     procedure Start(Proc:TNotifyEvent;Prm:TObject);
+     constructor Create(AOwner:TComponent);override;
+  end;
+
 
 
 
@@ -306,5 +316,29 @@ begin
 end;
 
 
+
+{ TdTimerExampleRun }
+
+constructor TdTimerExampleRun.Create(AOwner: TComponent);
+begin
+  inherited;
+  self.Interval:=50;
+  self.OnTimer:= TimerEvent;
+  self.Enabled:=false;
+end;
+
+procedure TdTimerExampleRun.Start(Proc: TNotifyEvent;Prm:TObject);
+begin
+   FProc:=Proc;
+   FPrm:=Prm;
+   self.Enabled:=true;
+end;
+
+procedure TdTimerExampleRun.TimerEvent(S: TObject);
+begin
+   self.Enabled:=false;
+   if Assigned(FProc) then
+   FProc(FPrm);
+end;
 
 end.

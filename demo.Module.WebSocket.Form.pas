@@ -120,6 +120,7 @@ type
     FSpliterControlInit:boolean;
     FServerSelectPair:TdWsClientPairCs;
     FExampleCasePanelShowResult:integer;
+    FWasMsgClient:boolean;
 
     procedure WsClientConnect;
     procedure WsClientDisconnect;
@@ -173,11 +174,15 @@ type
     procedure FormOut;
     function ClientActiveGet: boolean;
     function ServerActiveGet: boolean;
+    function ClientWasMsgGet: boolean;
+    procedure ClientWasMsgSet(const Value: boolean);
   public
     { Public declarations }
      function ExampleCasePanelShow:integer;
      property ServerActive: boolean read ServerActiveGet;
      property ClientActive: boolean read ClientActiveGet;
+     property ClientWasMsg: boolean read ClientWasMsgGet write ClientWasMsgSet;
+     procedure BeforeMainFormClose;
   end;
 
 var
@@ -217,6 +222,13 @@ begin
      Result:= Assigned(FWsServer) and FWsServer.Active;
 end;
 
+procedure TFormWebSocket.BeforeMainFormClose;
+begin
+   FormOut;
+   if FormWebSocket.Showing then
+   FormWebSocket.Hide;
+end;
+
 function TFormWebSocket.ClientActiveGet: boolean;
 begin
   Result:=  Assigned(FWsClient) and FWsClient.UserConnected
@@ -229,6 +241,7 @@ end;
 
 procedure TFormWebSocket.FormCreate(Sender: TObject);
 begin
+  FWasMsgClient:=false;
   FExampleCasePanelShowResult:=0;
   FSpliterControlInit:=false;
   FSettingLock:=0;
@@ -687,6 +700,7 @@ var ctx:TAmWsServerCtx_Base;
 param:TAmIoMsgParamWrite_Base;
 ReturnIsCtx:boolean;
 ReturnSend:boolean;
+S:string;
 begin
    if not Assigned(FWsServer)
    or not FWsServer.Active
@@ -694,7 +708,10 @@ begin
    or not Client.IsValid
    or (length(Text)=0)  then
    begin
-     showmessage('Сообщение не отправлено! Нет соединения или параметры назначения пусты');
+     S:='';
+     if not Client.IsValid then
+     S:=#13#10+'Выберите из списка подключеных клиентов'+#13#10+' клиента, которому нужно отправить сообщение.';
+     AmDialog.ShowTimeOut('','Сообщение не отправлено! Нет соединения или параметры назначения пусты.'+S,10000);
      exit;
    end;
   {
@@ -773,6 +790,16 @@ begin
       WsClientDisconnect
    else
       WsClientConnect;
+end;
+
+function TFormWebSocket.ClientWasMsgGet: boolean;
+begin
+  Result:= AmAtomic.Getter(FWasMsgClient);
+end;
+
+procedure TFormWebSocket.ClientWasMsgSet(const Value: boolean);
+begin
+    AmAtomic.Setter(FWasMsgClient,Value)
 end;
 
 procedure TFormWebSocket.WsClientConnect;
@@ -909,6 +936,7 @@ end;
 
 procedure TFormWebSocket.WsClientMsg(ParentClient: TAmWsClientHttpBaseUser;const Text: string);
 begin
+    ClientWasMsg:=true;
     ClientLogCall('MSG EVENT',true,Text);
 end;
 procedure TFormWebSocket.WsClientDisconnected(Sender: TObject);

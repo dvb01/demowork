@@ -43,8 +43,8 @@ object FormHideControls: TFormHideControls
         TabOrder = 0
       end
       object P_PanelSimpleExample: TAmPanel
-        Left = 762
-        Top = 69
+        Left = 154
+        Top = 101
         Width = 108
         Height = 41
         Visible = False
@@ -64,6 +64,32 @@ object FormHideControls: TFormHideControls
         GrandientOpt.Radius = 444
         ColorBolder = 8453888
         ColorBolder2 = 8453888
+        TransparentLevel = 220
+        VisibleDelay = 500
+        VisibleCountFrame = 30
+      end
+      object AmPanel1: TAmPanel
+        Left = 154
+        Top = 148
+        Width = 108
+        Height = 41
+        Visible = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 2
+        BevelWidth = 3
+        Caption = #1054#1090#1084#1077#1085#1072
+        GrandientOpt.Active = True
+        GrandientOpt.Kind = amgrRadial
+        GrandientOpt.Color1 = 3026561
+        GrandientOpt.Color2 = 5464317
+        GrandientOpt.Radius = 444
+        ColorBolder = 8421631
+        ColorBolder2 = 8421631
         TransparentLevel = 220
         VisibleDelay = 500
         VisibleCountFrame = 30

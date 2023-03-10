@@ -195,14 +195,12 @@ procedure TdExample.AppicationHook(var Msg: TMsg; var Handled: Boolean);
 begin
   if ButRunShowing and  AmControlSup.MessageIsCancelModeClickLB(Msg.message) then
   PanelHideCheckHandle(Msg.hwnd);
-  if (FExampleStarted>0) and  AmControlSup.MessageIsLossFocusApplication(Msg.hwnd,Msg.message,Msg.wParam) then
-  FLossFocusApp:=true;
 end;
 
 function TdExample.AppicationHookWindow(var Msg: TMessage):Boolean;
 begin
   Result:=false;
-  if (FExampleStarted>0) and  AmControlSup.MessageIsLossFocusApplication(0,Msg.Msg,Msg.WParam) then
+  if (FExampleStarted>0) and  AmControlSup.MessageIsLossFocusApplication(0,Msg) then
   FLossFocusApp:=true;
 end;
 

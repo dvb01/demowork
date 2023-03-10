@@ -55,8 +55,12 @@ uses
      protected
       Cmd:TdExampleExecuteCmd;
       property Terminated: boolean read TerminatedGet;
+      function TimerStart(Proc:TNotifyEvent;Prm:TObject):TObject;
+
       procedure Run_Module_PhotoCollage;virtual;abstract;
+
       procedure Run_Module_ScrollBoxPto;virtual;abstract;
+
       procedure Run_Module_WebSocket;virtual;
       procedure Run_Module_WebSocket_Local;virtual;abstract;
       procedure Run_Module_WebSocket_Remote;virtual;abstract;
@@ -76,6 +80,7 @@ uses
         procedure Run_Module_ScrollBoxPto;override;
         procedure Run_Module_WebSocket_Local;override;
         procedure Run_Module_WebSocket_Remote;override;
+        procedure Run_Module_WebSocket_Client(Url:string);
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -98,6 +103,9 @@ uses
        procedure Run_Module_ScrollBoxPto;override;
        procedure Run_Module_WebSocket_Local;override;
        procedure Run_Module_WebSocket_Remote;override;
+       procedure Run_Module_WebSocket_Client(Url:string);
+       procedure Run_Module_WebSocket_MessageServerToClient(Text:string);
+       procedure Run_Module_WebSocket_MessageServerToClient_FormModal(Prm:TObject);
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -156,6 +164,12 @@ begin
  Result:=self.GetThreadTerminated;
 end;
 
+
+function TdExampleRunBase.TimerStart(Proc: TNotifyEvent; Prm: TObject): TObject;
+begin
+  Result:= TdTimerExampleRun.Create(self);
+  TdTimerExampleRun(Result).Start(Proc,Prm);
+end;
 
 procedure TdExampleRunBase.Run;
 var P:TWinControl;
@@ -421,7 +435,110 @@ begin
 
    R:= CallMove(FormWs,false,'Сейчас настроим клиент');
    if not R then exit;
+   Run_Module_WebSocket_Client('https://127.0.0.1:5756');
+   if self.Terminated then exit;
 
+   Run_Module_WebSocket_MessageServerToClient('Привет я сервер!');
+end;
+
+procedure TdExampleRunPlayer.Run_Module_WebSocket_MessageServerToClient(Text:string);
+var R:boolean;
+T:TObject;
+PrmStr:PString;
+begin
+
+   if FormWs.P_Server_ClientList.Items.Count<0 then
+   exit;
+
+   R:= CallMove(FormWs,false,'Отправим сообщение клиенту');
+   if not R then exit;
+
+   R:= CallMove(FormWs.P_Server_ClientList,true,'Выбрать клиента для отправки сообщения');
+   if not R then exit;
+   R:= Cmd.ComboBoxSetIndex(FormWs.P_Server_ClientList,0) and  Cmd.Delay(500);
+   if not  R then
+   exit;
+
+   R:= CallMove(FormWs.P_Server_SendMessageToClient,true,'Открыть окно редактора сообщения');
+   if not R then exit;
+
+   // вызов модальной формы без потери котроля анимацией
+   New(PrmStr);
+   try
+     PrmStr^:= Text;
+     T:=  TimerStart(Run_Module_WebSocket_MessageServerToClient_FormModal,TObject(PrmStr));
+     try
+       R:= Cmd.ButtonClick(FormWs.P_Server_SendMessageToClient);
+       if not R then
+       exit;
+     finally
+        T.Free;
+     end;
+   finally
+      Dispose(PrmStr);
+   end;
+
+end;
+
+procedure TdExampleRunPlayer.Run_Module_WebSocket_MessageServerToClient_FormModal(Prm:TObject);
+var R:boolean;
+    Frm:TAmFormModal;
+    S:string;
+begin
+     Frm:=  FormModalActive;
+     if Frm = nil then   exit;
+     Frm.CanCloseForm:=false;
+     try
+       if FormWs.P_Server_SendPanel.Parent <>  Frm then
+       exit;
+
+
+       R:= CallMove(FormWs.P_Server_SendMessageText,false,'Написать сообщение выбранному клиенту');
+       if not R then exit;
+       if FormWs.P_Server_SendPanel.Parent <>  Frm then
+       exit;
+
+       Cmd.MemoSetText(FormWs.P_Server_SendMessageText,string(PString(Prm)^));
+       if not R then
+       exit;
+       if FormWs.P_Server_SendPanel.Parent <>  Frm then
+       exit;
+
+       R:= CallMove(FormWs.P_Server_SendText,true,'Отправить');
+       if not R then exit;
+       if FormWs.P_Server_SendPanel.Parent <>  Frm then
+       exit;
+
+       FormWs.ClientWasMsg:=false;
+       R:= Cmd.ButtonClick(FormWs.P_Server_SendText);
+       if not R then
+       exit;
+       if FormWs.P_Server_SendPanel.Parent <>  Frm then
+       exit;
+       R:= Cmd.Delay(200);
+       if not R then exit;
+       if FormWs.ClientWasMsg then S:='Клиент получил сообщение'
+       else                        S:='Клиенту не удалось получить сообщение';
+       R:= CallMove(FormWs.P_Client_Log,true,S);
+       if not R then exit;
+
+     finally
+        Frm.CanCloseForm:=true;
+        if FormWs.P_Server_SendPanel.Parent =   Frm then
+        Frm.Close;
+     end;
+end;
+
+procedure TdExampleRunPlayer.Run_Module_WebSocket_Remote;
+begin
+   MainFormResize(self);
+   Cmd.MouseTo(FCursor.CursorLayer,GetPoint(FormWs));
+    Run_Module_WebSocket_Client('https://stream.binance.com:9443/stream?streams=btcusdt@kline_15m');
+end;
+procedure TdExampleRunPlayer.Run_Module_WebSocket_Client(Url:string);
+var R:boolean;
+S:string;
+begin
 
 
    R:= CallMove(FormWs.P_Client_Connect,true,'');
@@ -447,7 +564,7 @@ begin
 
    R:= CallMove(FormWs.P_Client_Url,true,'Указать url подключения');
    if not R then exit;
-   R:= Cmd.EditSetText(FormWs.P_Client_Url,'https://127.0.0.1:5756') and  Cmd.Delay(500);
+   R:= Cmd.EditSetText(FormWs.P_Client_Url,Url) and  Cmd.Delay(500);
    if not  R then
    exit;
    R:= CallMove(FormWs.P_Client_UrlListOpen,true,'Можно выбрать url из списка');
@@ -459,6 +576,8 @@ begin
    if not R then exit;
    S:='Требует ли сервер SSL шифрование';
    R:=Cmd.ShowMessage(S,FormWs.P_Client_Ssl,3000);
+   if not R then exit;
+   R:=Cmd.CheckBoxSet(FormWs.P_Client_Ssl,true);
    if not R then exit;
 
    R:= CallMove(FormWs.P_Client_Connect,true,'Запустить клиент');
@@ -486,14 +605,6 @@ begin
    S:='После удачного запуска клиент и сервер могут отправлять друг другу сообщения';
    R:=Cmd.ShowMessage(S,FormWs.P_Client_Log,5000);
    if not R then exit;
-
-
-end;
-
-procedure TdExampleRunPlayer.Run_Module_WebSocket_Remote;
-begin
-  inherited;
-
 end;
 
 { TdExampleRunSimple }
@@ -535,12 +646,44 @@ end;
 
 procedure TdExampleRunSimple.Run_Module_WebSocket_Local;
 begin
-
+   if FormWs.ServerActive then
+   Cmd.ButtonClick(FormWs.P_Server_Run);
+   Cmd.Delay(50);
+   if not Cmd.ComboBoxSetIndex(FormWs.P_Server_SocketClass,1)then exit;
+   Cmd.Delay(50);
+   if not Cmd.EditSetText(FormWs.P_Server_Port,'5756')then exit;
+   Cmd.Delay(50);
+   Cmd.CheckBoxSet(FormWs.P_Server_Ssl,true);
+   Cmd.Delay(50);
+   if FormWs.ServerActive then
+   Cmd.ButtonClick(FormWs.P_Server_Run);
+   Cmd.Delay(50);
+   if not FormWs.ServerActive then
+   Cmd.ButtonClick(FormWs.P_Server_Run);
+   Cmd.Delay(50);
+   Run_Module_WebSocket_Client('https://127.0.0.1:5756');
 end;
 
 procedure TdExampleRunSimple.Run_Module_WebSocket_Remote;
 begin
+    Run_Module_WebSocket_Client('https://stream.binance.com:9443/stream?streams=btcusdt@kline_15m');
+end;
 
+procedure TdExampleRunSimple.Run_Module_WebSocket_Client(Url:string);
+begin
+   if FormWs.ClientActive then
+   Cmd.ButtonClick(FormWs.P_Client_Connect);
+   Cmd.Delay(50);
+   if not Cmd.ComboBoxSetIndex(FormWs.P_Client_Class,1)then exit;
+   Cmd.Delay(50);
+   if not Cmd.EditSetText(FormWs.P_Client_Url,Url) then exit;
+   Cmd.Delay(50);
+   Cmd.CheckBoxSet(FormWs.P_Client_Ssl,true);
+   Cmd.Delay(50);
+   if FormWs.ClientActive then
+   Cmd.ButtonClick(FormWs.P_Client_Connect);
+   if not FormWs.ClientActive then
+   Cmd.ButtonClick(FormWs.P_Client_Connect);
 end;
 
 procedure TdExampleRunSimple.Run_Module_PhotoCollage_LoadFile;

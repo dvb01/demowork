@@ -147,6 +147,7 @@ type
     P_PhotoCollage_CollageSaveToFile: TAmButton;
     P_PhotoCollage_ParserCollage: TAmButton;
     P_PhotoCollage_ExampleShow: TAmButton;
+    AmButton9: TAmButton;
 
     procedure FormCreate(Sender: TObject);
     procedure PanelCustomBack(Sender: TObject);
@@ -178,6 +179,7 @@ type
     procedure P_ScrollBoxPto_ScrollPosClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure P_PhotoCollage_ExampleShowClick(Sender: TObject);
+    procedure AmButton9Click(Sender: TObject);
   private
     { Private declarations }
     FOnResizeEvent:IAmEventMethod<TNotifyEvent>;
@@ -222,6 +224,12 @@ implementation
    demo.Module.WebSocket.Form;
 {$R *.dfm}
 
+procedure TFormMain.AmButton9Click(Sender: TObject);
+begin
+    FExample.PanelOutRegistry(PanelShowCurrent);
+    FExample.PanelShowCheck(PanelShowCurrent);
+end;
+
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
 
@@ -235,9 +243,9 @@ begin
    end;
    FClosingProcess:=true;
    CanClose:=true;
-   if (FormWebSocket <> nil)
-   and FormWebSocket.Showing then
-   FormWebSocket.Hide;
+   if (FormWebSocket <> nil) then
+     FormWebSocket.BeforeMainFormClose;
+
    ModifedTextCodeEditorCheck(true);
    LogMain.BeforeDestoyLockNewMsg;
    TAmObjectNotify.Default.SendMessage(AmOperation.MainFormClose,0,0);
@@ -245,6 +253,7 @@ begin
    FreeAndNil(FExample);
    FreeAndNil(FStackPanel);
    FOnResizeEvent:=nil;
+
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);

@@ -434,7 +434,7 @@ object FormWebSocket: TFormWebSocket
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
-        Color = 4013588
+        Color = 4144917
         Ctl3D = False
         DoubleBuffered = True
         Font.Charset = DEFAULT_CHARSET
@@ -1473,7 +1473,7 @@ object FormWebSocket: TFormWebSocket
       BevelInner = bvNone
       BevelOuter = bvNone
       BorderStyle = bsNone
-      Color = 1779255
+      Color = 1779769
       Ctl3D = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -1539,8 +1539,8 @@ object FormWebSocket: TFormWebSocket
     end
   end
   object P_Example_CasePanel: TAmLayout
-    Left = 424
-    Top = 286
+    Left = 489
+    Top = 253
     Width = 433
     Height = 222
     Visible = False
