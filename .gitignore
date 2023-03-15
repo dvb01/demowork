@@ -32,6 +32,7 @@
 *.exe
 Win32/Debug/set/
 Win32/Debug/set/.dpu/
+Win32/Debug/.dpu/
 *.zip
 *.rar
 
