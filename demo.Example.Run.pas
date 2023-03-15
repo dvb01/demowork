@@ -64,6 +64,8 @@ uses
       procedure Run_Module_WebSocket;virtual;
       procedure Run_Module_WebSocket_Local;virtual;abstract;
       procedure Run_Module_WebSocket_Remote;virtual;abstract;
+
+      procedure Run_Module_ApiVk;virtual;abstract;
      public
       constructor Create(AOwner:TComponent); override;
       destructor Destroy;override;
@@ -81,6 +83,8 @@ uses
         procedure Run_Module_WebSocket_Local;override;
         procedure Run_Module_WebSocket_Remote;override;
         procedure Run_Module_WebSocket_Client(Url:string);
+
+        procedure Run_Module_ApiVk;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -100,12 +104,16 @@ uses
        function CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
 
        procedure Run_Module_PhotoCollage;override;
+
        procedure Run_Module_ScrollBoxPto;override;
+
        procedure Run_Module_WebSocket_Local;override;
        procedure Run_Module_WebSocket_Remote;override;
        procedure Run_Module_WebSocket_Client(Url:string);
        procedure Run_Module_WebSocket_MessageServerToClient(Text:string);
        procedure Run_Module_WebSocket_MessageServerToClient_FormModal(Prm:TObject);
+
+       procedure Run_Module_ApiVk;override;
      public
       constructor Create(AOwner:TComponent);override;
       destructor Destroy;override;
@@ -181,6 +189,10 @@ begin
       Run_Module_ScrollBoxPto
     else if P = FormMain.P_WebSocket then
       Run_Module_WebSocket
+    else if P = FormMain.P_ApiVk then
+      Run_Module_ApiVk
+    else
+    AmDialog.ShowTimeOut('','Для этого модуля еще не написан код примера',5000);
 end;
 
 procedure TdExampleRunBase.Run_Module_WebSocket;
@@ -273,6 +285,58 @@ begin
    if (Caption<>'') and not Cmd.ShowMessage(Caption,C,2000) then
     exit(false);
    Result:=true;
+end;
+
+procedure TdExampleRunPlayer.Run_Module_ApiVk;
+var R:boolean;
+S:string;
+begin
+   MainFormResize(self);
+   Cmd.MouseTo(FCursor.CursorLayer,GetPoint(FormMain));
+   if DemoMain.FormCodeEditor.Parent <> FormMain.P_ApiVk_EditorClient then
+   exit;
+   S:='Мини IDE c компилятором и редактором кода, позволяет встраивать новый opcode в текущее приложение.';
+   R:= CallMove(DemoMain.FormCodeEditor,true,'');
+   if not R then exit;
+   R:= Cmd.ShowMessage(S,DemoMain.FormCodeEditor,8000);
+   if not R then exit;
+   S:='Компилятор не является родным и до BDS ему далеко.'+
+   #13#10+'В редактор уже вставлен код примера. Он получает данных о пользователе Vk. Вам нужно в настройках указать токен аккаунта вк и запустить скрипт. ';
+   R:= Cmd.ShowMessage(S,DemoMain.FormCodeEditor,15000);
+   if not R then exit;
+   S:='Далее указаный код скомпилируется и запустится к контекте потока который вызвал компиляцию. В этой демке это главный поток приложения. ';
+   R:= Cmd.ShowMessage(S,DemoMain.FormCodeEditor,12000);
+   if not R then exit;
+   S:='Также вы можете написать свой код или погулять по объектам вызывая подсказку кода через точку. ';
+   R:= Cmd.ShowMessage(S,DemoMain.FormCodeEditor,8000);
+   if not R then exit;
+
+   R:= CallMove(DemoMain.FormCodeEditor.ButLoadDefault,true,'');
+   if not R then exit;
+   S:='Нажав сюда вы загрузите другой пример, который считает суммы и создает модальные формы. ';
+   R:= Cmd.ShowMessage(S,DemoMain.FormCodeEditor.ButLoadDefault,9000);
+   if not R then exit;
+
+   R:= CallMove(FormMain.P_ApiVk_SettingOpen,true,'');
+   if not R then exit;
+   S:='Нажмите сюда если хотите указать токен вк. ';
+   R:= Cmd.ShowMessage(S,FormMain.P_ApiVk_SettingOpen,7000);
+   if not R then exit;
+
+   R:= CallMove(FormMain.P_ApiVk_LoadDefaultCode,true,'');
+   if not R then exit;
+   S:='Загрузить в редактор пример по умолчанию (Получение информации о пользователе вк). ';
+   R:= Cmd.ShowMessage(S,FormMain.P_ApiVk_LoadDefaultCode,7000);
+   if not R then exit;
+
+   R:= CallMove(FormMain.P_ApiVk_TextCodeSave,true,'');
+   if not R then exit;
+   S:='Сохраните свой код локально. При повторных запусках загрузится именно ваш код. ';
+   R:= Cmd.ShowMessage(S,FormMain.P_ApiVk_TextCodeSave,7000);
+   if not R then exit;
+
+
+
 end;
 
 procedure TdExampleRunPlayer.Run_Module_PhotoCollage;
@@ -617,6 +681,11 @@ end;
 destructor TdExampleRunSimple.Destroy;
 begin
   inherited;
+end;
+
+procedure TdExampleRunSimple.Run_Module_ApiVk;
+begin
+  AmDialog.ShowTimeOut('','Для модуля ApiVk без анимации нечего настраивать. Включите пример с анимацией.',5000);
 end;
 
 procedure TdExampleRunSimple.Run_Module_PhotoCollage;

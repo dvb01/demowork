@@ -23,6 +23,7 @@ uses
 
   JsonDataObjects,
 
+
   AmUserType,
   AmUserScale,
   AmLayBase,
@@ -84,7 +85,6 @@ type
     AmButton3: TAmButton;
     AmButton5: TAmButton;
     AmButton6: TAmButton;
-    AmButton1: TAmButton;
     AmButton2: TAmButton;
     AmButton7: TAmButton;
     AmButton8: TAmButton;
@@ -94,7 +94,7 @@ type
     P_PhotoCollage_LayClient: TAmLayout;
     P_PhotoCollage_Collage: TAmImageCollage;
     P_PhotoCollage_Back: TAmButton;
-    SbTheme: TAmScrollBarThemeLink;
+    ScrollbarTheme: TAmScrollBarThemeLink;
     P_ApiVk: TAmPanel;
     Label3: TLabel;
     Label4: TLabel;
@@ -273,8 +273,8 @@ begin
    ScrollBoxPto.Name:='ScrollBoxPto';
    ScrollBoxPto.Align.Align:=TptAlign.Client;
    ScrollBoxPto.Parent:=  P_ScrollBoxPto_Panel.PtControl;
-   ScrollBoxPto.BarV.AThemeLink:= SbTheme;
-   ScrollBoxPto.BarH.AThemeLink:= SbTheme;
+   ScrollBoxPto.BarV.AThemeLink:= ScrollbarTheme;
+   ScrollBoxPto.BarH.AThemeLink:= ScrollbarTheme;
   // ScrollBoxPto.Color:=clblack;
   // ScrollBoxPto.OnLog:=log;
    FOnResizeEvent:= AmEventMethod.New<TNotifyEvent>;
