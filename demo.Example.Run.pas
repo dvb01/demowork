@@ -145,7 +145,7 @@ end;
 constructor TdExampleRunBase.Create(AOwner:TComponent);
 begin
   if FCurrentRun <> nil then
-  raise Exception.Create('Error TdExampleRunBase.Create уже была защена одна анимация');
+  raise Exception.Create('Error TdExampleRunBase.Create уже была запущена одна анимация');
   inherited Create(AOwner);
   FCurrentRun:=self;
   Cmd:=TdExampleExecuteCmd.Create;
