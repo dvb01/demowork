@@ -49,6 +49,7 @@ uses
   AmCheckBox,
   AmComboBox,
   AmHookProc,
+  AmFormBased,
 
   AmVk.Api.Base,
   AmVk.Api.ObjVk,
@@ -64,7 +65,7 @@ uses
 
 
 type
-  TFormMain = class(TForm)
+  TFormMain = class(TAmFormBase)
     LayMain: TAmLayout;
     P_Main: TAmPanel;
     PMain_PanRight: TAmLayout;
