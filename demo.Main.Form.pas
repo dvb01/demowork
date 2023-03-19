@@ -9,7 +9,6 @@ uses
   System.Variants,
   System.Classes,
   Math,
-
   Vcl.Graphics,
   Vcl.Controls,
   Vcl.Forms,
@@ -185,11 +184,10 @@ type
     { Private declarations }
     FOnResizeEvent:IAmEventMethod<TNotifyEvent>;
     FClosingProcess:boolean;
-    FExample:TdExample;//demo.Example.TdExample; кнопка пример и анимация заполнения настроек пользователя
     FChangeSettingLock:integer;
     FStackPanel:TdStackPanel;
     FScrollBoxPtoCounterId:Cardinal;
-    ScrollBoxPto:TPtoScrollBox;
+    FScrollBoxPto:TPtoScrollBox;
 
     function ModifedTextCodeEditorCanSave(AutoSave,NeedConfirm:boolean):boolean;
     function ModifedTextCodeEditorReset(AsSaved:boolean):boolean;
@@ -214,6 +212,7 @@ type
     procedure OnResizeUnSub(Event:TNotifyEvent);
     procedure PhotoCollage_FileAddList(L:TStrings);
     property ClosingProcess: boolean read FClosingProcess;
+    property ScrollBoxPto: TPtoScrollBox read FScrollBoxPto;
   end;
 
 var
@@ -227,8 +226,8 @@ implementation
 
 procedure TFormMain.AmButton9Click(Sender: TObject);
 begin
-    FExample.PanelOutRegistry(PanelShowCurrent);
-    FExample.PanelShowCheck(PanelShowCurrent);
+    DemoMain.ExampleControl.PanelOutRegistry(PanelShowCurrent);
+    DemoMain.ExampleControl.PanelShowCheck(PanelShowCurrent);
 end;
 
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -251,7 +250,6 @@ begin
    LogMain.BeforeDestoyLockNewMsg;
    TAmObjectNotify.Default.SendMessage(AmOperation.MainFormClose,0,0);
    DemoMainDestroy;
-   FreeAndNil(FExample);
    FreeAndNil(FStackPanel);
    FOnResizeEvent:=nil;
 
@@ -270,17 +268,17 @@ begin
 
 
    FScrollBoxPtoCounterId:=0;
-   ScrollBoxPto:=TPtoScrollBox.Create;
-   ScrollBoxPto.Name:='ScrollBoxPto';
-   ScrollBoxPto.Align.Align:=TptAlign.Client;
-   ScrollBoxPto.Parent:=  P_ScrollBoxPto_Panel.PtControl;
-   ScrollBoxPto.BarV.AThemeLink:= ScrollbarTheme;
-   ScrollBoxPto.BarH.AThemeLink:= ScrollbarTheme;
+   FScrollBoxPto:=TPtoScrollBox.Create;
+   FScrollBoxPto.Name:='ScrollBoxPto';
+   FScrollBoxPto.Align.Align:=TptAlign.Client;
+   FScrollBoxPto.Parent:=  P_ScrollBoxPto_Panel.PtControl;
+   FScrollBoxPto.BarV.AThemeLink:= ScrollbarTheme;
+   FScrollBoxPto.BarH.AThemeLink:= ScrollbarTheme;
   // ScrollBoxPto.Color:=clblack;
   // ScrollBoxPto.OnLog:=log;
    FOnResizeEvent:= AmEventMethod.New<TNotifyEvent>;
-   DemoMainCreate;
-   FExample:= TdExample.Create(self);
+   DemoMainCreate(self);
+
 end;
 
 
@@ -322,19 +320,19 @@ end;
 procedure TFormMain.PanelOpen(Control: TAmPanel);
 begin
      FStackPanel.Peek.Visible:=false;
-     FExample.PanelHideCheck(false);
+     DemoMain.ExampleControl.PanelHideCheck(false);
      FStackPanel.Push(Control);
      Control.Visible:=true;
-     FExample.PanelShowCheck(Control);
+     DemoMain.ExampleControl.PanelShowCheck(Control);
 end;
 
 procedure TFormMain.PanelClose;
 begin
    if FStackPanel.Count <= 1 then exit;
-   FExample.PanelHideCheck(false);
+   DemoMain.ExampleControl.PanelHideCheck(false);
    FStackPanel.Pop.Visible:=false;
    FStackPanel.Peek.Visible:=true;
-   FExample.PanelShowCheck(FStackPanel.Peek);
+   DemoMain.ExampleControl.PanelShowCheck(FStackPanel.Peek);
 end;
 
 procedure TFormMain.PanelShowCurrentPairGet(var Panel,ButtonBack:TWinControl);
@@ -596,7 +594,6 @@ end;
 
 procedure TFormMain.PanGalaryMenu_WebSocketClick(Sender: TObject);
 begin
-
   if FormWebSocket = nil  then
   begin
    showmessage('Форма WebSocket еще недоступна попробуйте через 5 сек.');
@@ -609,10 +606,7 @@ begin
     FormWebSocket.Parent := P_WebSocket;
   end;
   FormWebSocket.Visible:=true;
-
   PanelOpen(P_WebSocket);
-
-   //P_WebSocket
 end;
 
 procedure TFormMain.P_WebSocket_BackClick(Sender: TObject);
@@ -650,8 +644,8 @@ end;
 
 procedure TFormMain.P_PhotoCollage_ExampleShowClick(Sender: TObject);
 begin
- FExample.PanelOutRegistry(P_PhotoCollage);
- FExample.PanelShowCheck(P_PhotoCollage);
+ DemoMain.ExampleControl.PanelOutRegistry(P_PhotoCollage);
+ DemoMain.ExampleControl.PanelShowCheck(P_PhotoCollage);
 end;
 
 procedure TFormMain.P_PhotoCollage_FileAddClick(Sender: TObject);
@@ -706,15 +700,13 @@ procedure TFormMain.P_PhotoCollage_ParserCollageClick(Sender: TObject);
  var Proc:TFormJsonResponseOnShowForm;
 begin
   Proc:= procedure (Form:TFormJsonResponse)
-    var J:TJsonObject;
     type
       // новый type т.к AmRecordHlp.ToJsonField парсит только record или object
       TRec = record
        List:TArray<TAmCollageItem>;
       end;
-
-
-var Rec:TRec;
+     var J:TJsonObject;
+     Rec:TRec;
    begin
        Form.Page.ActivePage:= Form.TabRecord;
        Rec.List:= P_PhotoCollage_Collage.Convector.ArrayItemsHack;
@@ -726,7 +718,6 @@ var Rec:TRec;
        end;
    end;
    AmFormViewField.Show(Proc);
-
 end;
 
 
@@ -747,7 +738,7 @@ var ms:TdDiagnosticTime;
 S:string;
 begin
   ms.Start;
-  ScrollBoxPto.Box.BazaList.ClearBaza;
+  FScrollBoxPto.Box.BazaList.ClearBaza;
   S:= ms.Stop;
   P_ScrollBoxPto_Log.Lines.Add('Удаление всех елементов заняло:'+S);
 end;
@@ -756,8 +747,10 @@ procedure TFormMain.P_ScrollBoxPto_DeleteClick(Sender: TObject);
 var i:integer;
 begin
   i:= AmInt(P_ScrollBoxPto_DeleteIndexValue.EditText.Replace(' ',''),-1);
-  if (i>=0) and (i< ScrollBoxPto.Box.BazaList.CountBaza) then
-  ScrollBoxPto.Box.BazaList.ItemsBaza[i].Free;
+  if (i>=0) and (i< FScrollBoxPto.Box.BazaList.CountBaza) then
+   FScrollBoxPto.Box.BazaList.ItemsBaza[i].Free
+  else
+   showmessage('Упс! ['+i.ToString+'] индекса в списке нет.');
 end;
 
 procedure TFormMain.P_ScrollBoxPto_EditNumberCheckEditCheckNewText(Sender: TObject;
@@ -777,10 +770,10 @@ begin
    B:=P_ScrollBoxPto_ScrollPosIsAnimated.Checked;
    Time:=amIf.Car(B,200,0);
    I:=  amInt64Max(P_ScrollBoxPto_ScrollPosValue.EditText.Replace(' ',''),0);
-   ScrollBoxPto.Box.BazaScrollJumpToPos(I,Time);
+   FScrollBoxPto.Box.BazaScrollJumpToPos(I,Time);
    S:= ms.Stop(dMs,amIf.Car(B,200,0));
    P_ScrollBoxPto_Log.Lines.Add('Скролинг занял :'+S);
-   P_ScrollBoxPto_ScrollPosValue.EditText:= ScrollBoxPto.Box.BazaPosition.ToString;
+   P_ScrollBoxPto_ScrollPosValue.EditText:= FScrollBoxPto.Box.BazaPosition.ToString;
 end;
 
 procedure TFormMain.P_ScrollBoxPto_AddClick(Sender: TObject);
@@ -798,14 +791,14 @@ var i:integer;
       c:=amIntMax(s);
      if c>2000000 then
       c:= 2000000;
-     Result:= min(3000000 - ScrollBoxPto.Box.BazaList.CountBaza,c);
+     Result:= min(3000000 - FScrollBoxPto.Box.BazaList.CountBaza,c);
   end;
 begin
 
   c:= LocGetCount;
   P_ScrollBoxPto_AddCountValue.EditText:= c.ToString;
   ms.Start;
-  ScrollBoxPto.Box.BazaScrollLock;
+  FScrollBoxPto.Box.BazaScrollLock;
   try
 
      for I := 0 to c -1  do
@@ -817,11 +810,11 @@ begin
        // if random(100)<50 then
         //B.Offset:=10;
         B.ColorTest:=AmColorConvert2.RandomColorL(177);
-        B.Box:= ScrollBoxPto.Box;
+        B.Box:= FScrollBoxPto.Box;
      end;
 
   finally
-    ScrollBoxPto.Box.BazaScrollUnLock;
+    FScrollBoxPto.Box.BazaScrollUnLock;
   end;
   S:= ms.Stop;
   P_ScrollBoxPto_Log.Lines.Add('Добавление елементов заняло:'+S);

@@ -12,37 +12,17 @@ uses
   Vcl.Controls,
   Vcl.Forms,
   Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ComCtrls,
   Vcl.ExtCtrls,
-  ES.BaseControls,
-  ES.Layouts,
-  AmLayBase,
-  AmHookProc,
   AmPanel,
-  AmButton,
-  AmPtPanel,
-  AmPtControl,
   AmSystemBase,
   AmSystemObject,
-  AmLogTo,
-  AmMemo,
-  AmEdit,
-  AmCheckBox,
-  AmFormModal,
-  AmComboBox,
-  AmScrollBarTypes,
   AmUserType,
   AmUserScale,
   AmControlClasses,
   AmGraphic.Help,
-  AmListBox,
-  AmGraphic.Controls,
-  AmControls,
+  AmGraphic.Canvas.Help,
   AmHookApp,
   AmLayCursor,
-  AmGraphic.Canvas.Help,
-  AmPtScrollBoxOptimized,
   demo.Types,
   demo.Consts;
 
@@ -104,25 +84,7 @@ uses
 
 
 
-  {
 
-procedure MakeRounded(Control: TWinControl);
-var
-  R: TRect;
-  Rgn: HRGN;
-begin
-  with Control do
-  begin
-    R := ClientRect;
-    rgn := CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, 20, 20);
-    Perform(EM_GETRECT, 0, lParam(@r));
-    InflateRect(r, - 5, - 5);
-    Perform(EM_SETRECTNP, 0, lParam(@r));
-    SetWindowRgn(Handle, rgn, True);
-    Invalidate;
-  end;
-end;
-  }
 
 
 

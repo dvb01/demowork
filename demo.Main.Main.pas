@@ -22,7 +22,8 @@ uses
   AmHandleObject,
   AmJsonBaza,
   AmLogTo,
-  AmPaxCodeEditor,AmPax,
+  AmPaxCodeEditor,
+  AmPax,
 
   AmVk.Api.Base,
   AmVk.Api.ObjVk,
@@ -31,12 +32,17 @@ uses
   AmVk.Api.Cmd,
   uAmVkHttp,
 
+  demo.Example.Main,
   demo.Module.ApiVk.Baza,
   demo.Module.WebSocket.Baza  ;
 
+  // текущий модуль подключатся только в  uses после  implementation
+
 type
 
-
+  // класс настроек модулей пользователя
+  // при расширении функционала настроек
+  // добавить сюда новый property
   TdBazaSetting = class (TJsonBazaObjCustom)
     private
       FModuleApiVk: TdModuleApiVkBazaSetting;
@@ -53,6 +59,7 @@ type
       destructor  Destroy;Override;
   end;
 
+  // главный класс настроек пользователя
   TdMainBaza = class  (TAmObjectCs)
    private
     FSetting:TdBazaSetting;
@@ -70,14 +77,17 @@ type
     property Setting: TdBazaSetting read SettingGet;
    end;
 
-
+   // текущий модуль может отправлять следующие уведомления всей программе
+   // каждую константу нужно зарегистрировать в  initialization
    demoOperation  = class (AmOperation)
       const User = AmOperation.User +7000;
       const Create = User + 1;
       const Destroy = User + 2;
    end;
 
-
+   // главный класс программы
+   // все сторонние модули-переменные, которым требуется глобальная видимость добавляются сюда
+   // за исключением классов настроек
    TdMain = class (TAmObjectNotify)
     const
      MainPathLog ='set\log\';
@@ -88,6 +98,7 @@ type
      FObjBaza: TdMainBaza;
      FFormCodeEditor:TFormPaxCodeEditor;
      FVkHttp:TAmVkHttp;
+     FExampleControl:TdExample;//demo.Example.TdExample; кнопка-пример воспроизведение анимации заполнения настроек пользователя
      FAppCloseLockCount:integer;
      function ObjBazaGet: TdMainBaza;
      function FormCodeEditorGet: TFormPaxCodeEditor;
@@ -102,33 +113,41 @@ type
     protected
      procedure Notification(Source:TAmObjectNotify; Msg:TAmOperation; W,L:Cardinal);override;
     public
-      constructor Create();
+      constructor Create(AFormMain:TForm);
       destructor Destroy;override;
       class function wsSllServerCheckFile:boolean;
       property ObjBaza: TdMainBaza read ObjBazaGet;
       property FormCodeEditor: TFormPaxCodeEditor read FormCodeEditorGet;
       property VkHttp: TAmVkHttp read VkHttpGet;
       property VkHttpPVar: Pointer read VkHttpPVarGet;
+      property ExampleControl: TdExample read FExampleControl;
       procedure  VkHttpCheckCreate;
       procedure  VkHttpCreate;
       procedure  VkHttpDestoy;
+
+      // блокировка закрытия главной формы
+      // блокировать при начале выполнения сложных продолжительный действий
+      //  при их окончании заблокировать
       procedure AppCloseLock;
       procedure AppCloseUnLock;
       property AppCloseLockCount: integer read AppCloseLockCountGet;
+
+      // только для главного потока приложения
+      // true когда пользователь хочет закрыть программу
       property AppCloseTerminated: boolean read AppCloseTerminatedGet;
    end;
 
-   procedure DemoMainCreate;
+   procedure DemoMainCreate(AFormMain:TForm);
    procedure DemoMainDestroy;
    function  DemoMain: TdMain;
 implementation
  uses demo.Main.Form;
 var FMain:TdMain=nil;
-procedure DemoMainCreate;
+procedure DemoMainCreate(AFormMain:TForm);
 begin
    if FMain <> nil then
    raise Exception.Create('Error DemoMainCreate  FMain <> nil');
-   FMain:=TdMain.Create;
+   FMain:=TdMain.Create(AFormMain);
    TAmObjectNotify.Default.SendMessage(demoOperation.Create,0,0);
 end;
 procedure DemoMainDestroy;
@@ -152,7 +171,7 @@ end;
 
 
 
-constructor TdMain.Create;
+constructor TdMain.Create(AFormMain:TForm);
 begin
   inherited Create;
   FFormCodeEditor:=nil;
@@ -178,6 +197,7 @@ begin
   FObjBaza:=TdMainBaza.Create;
   FObjBaza.OnLog:=LogProc;
   FormCodeEditorCreateCall;
+  FExampleControl:= TdExample.Create(AFormMain);
 end;
 
 destructor TdMain.Destroy;
@@ -190,6 +210,7 @@ begin
   LogMain.Log('PROG FINISH');
   LogMain.Log('');
   LogMain.Log('');
+  FreeAndNil(FExampleControl);
   FreeAndNil(LogMain);
   inherited;
 end;

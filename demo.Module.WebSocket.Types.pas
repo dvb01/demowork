@@ -232,8 +232,6 @@ begin
   Lock;
   try
     Result:=FPair;
-    // Result.Ip:= FPair.Ip;
-    // Result.Port:= FPair.Port;
   finally
    UnLock;
   end;

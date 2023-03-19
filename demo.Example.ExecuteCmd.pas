@@ -16,24 +16,18 @@ uses
   Vcl.StdCtrls,
   Vcl.ComCtrls,
   Vcl.ExtCtrls,
-  ES.BaseControls,
-  ES.Layouts,
   AmLayBase,
   AmControlClasses,
   AmPanel,
   AmButton,
-  AmPtPanel,
-  AmPtControl,
   AmSystemBase,
   AmSystemObject,
-  AmLogTo,
   AmMemo,
   AmMenu,
   AmEdit,
   AmCheckBox,
   AmFormModal,
   AmComboBox,
-  AmScrollBarTypes,
   AmUserType,
   AmUserScale,
   AmGraphic.Help,
@@ -41,7 +35,6 @@ uses
   AmGraphic.Controls,
   AmControls,
   AmHookApp,
-  AmPtScrollBoxOptimized,
   demo.Types,
   demo.Consts,
   demo.Example.Types;
@@ -49,10 +42,12 @@ uses
   type
    PdExampleSCPrm =^TdExampleSCPrm;
    TdExampleSCPrm = record
-     TimeOutMs:Cardinal;
-     Pos:TPoint;
-     ShowControl:TWinControl;
+     TimeOutMs:Cardinal; // время жизни сообщения
+     Pos:TPoint;   // центральная позиция относительно экрана
+     ShowControl:TWinControl; // что имеено показывать
      procedure Init;
+     // на форме есть какой то контрол возде которого показать сообщение
+     // передать этот контрол сюда что бы установить Pos:TPoint;
      procedure  PosToCenterControlSet(C:TControl);
    end;
 
@@ -65,33 +60,48 @@ uses
       function ShowControlCustom(Prm:PdExampleSCPrm):boolean;
       function ShowControlCustomExp(P:TAmPopupControl;Prm:PdExampleSCPrm):boolean;
     public
+       // вернет координаты передаваемого относительно экрана
        function GetBoundsScreen(C:TControl):TAmBounds;
        function GetPoint(C:TControl):TPoint;
 
+
+      // всплывающение окно с текстом
       function ShowControl(Prm:PdExampleSCPrm):boolean;
       function ShowMessage(AText:string;ScreenPos:TPoint;TimeOutMs:Cardinal):boolean; overload;
       function ShowMessage(AText:string;ScreenPos:TControl;TimeOutMs:Cardinal):boolean; overload;
 
-
-      //SC  ShowControl с  внешним управлением
+       // всплывающение окно с текстом  с  внешним управлением
+      //SC  ShowControl
       function  SC_Create:TComponent;
       procedure SC_Show(Handle:TComponent;Prm:PdExampleSCPrm);
       procedure SC_CanCloseSet(Handle:TComponent;Value:boolean);
       procedure SC_Hide(Handle:TComponent);
       procedure SC_Free(Handle:TComponent);
 
-      function MouseTo(C:TControl;P:TPoint):boolean;
-      function MousePos(C:TControl):TPoint;
-      function MouseMove(C:TControl;P:TPoint;Speed:byte):boolean;
-      function MouseClick(C:TControl;col,col2:TColor):boolean;
+
+      // поменять мнгновенно позицию котрола
+      function MouseTo(Cursor:TControl;P:TPoint):boolean;
+      // поменять позицию котрола для курсора
+      function MousePos(Cursor:TControl):TPoint;
+
+      // плавное перемещение курсора
+      function MouseMove(Cursor:TControl;P:TPoint;Speed:byte):boolean;
+      // эффект клика курсора
+      function MouseClick(Cursor:TControl;col,col2:TColor):boolean;
+
+      // задержка
       function DelayStd:boolean;
       function Delay(Ms:Cardinal):boolean;
+
+      // действия над котролами клики изменения текста и т.д
       function ButtonClick(B:TAmButton):boolean;
       function ComboBoxSetIndex(C:TAmComboBox;Index:integer):boolean;
       function ComboBoxSetText(C:TAmComboBox;Text:string):boolean;
       function EditSetText(C:TAmEdit;Text:string):boolean;
       function MemoSetText(C:TAmMemo;Text:string):boolean;
       function CheckBoxSet(C:TAmCheckBox;Value:boolean):boolean;
+
+
       constructor Create();
       destructor Destroy;override;
    end;
@@ -114,8 +124,9 @@ begin
   inherited;
 end;
 
-function TdExampleExecuteCmd.MouseMove(C: TControl; P: TPoint;Speed:byte): boolean;
+function TdExampleExecuteCmd.MouseMove(Cursor: TControl; P: TPoint;Speed:byte): boolean;
 var
+   C: TControl;
    PixInc:integer;
    ms:Cardinal;
    function Loc:boolean;
@@ -200,6 +211,7 @@ var
 
    end;
 begin
+    C:= Cursor;
     if Speed<1 then
     Speed:=1;
     // max speed 800 px/sec  при маштабе 100%
@@ -209,11 +221,11 @@ begin
     Result:= Loc;
 end;
 
-function TdExampleExecuteCmd.MouseTo(C: TControl; P: TPoint): boolean;
+function TdExampleExecuteCmd.MouseTo(Cursor: TControl; P: TPoint): boolean;
 begin
-  P.X:= P.X - C.Width div 2;
-  P.Y:= P.Y - C.Height div 2;
-  C.SetBounds(P.X,P.Y,C.Width,C.Height);
+  P.X:= P.X - Cursor.Width div 2;
+  P.Y:= P.Y - Cursor.Height div 2;
+  Cursor.SetBounds(P.X,P.Y,Cursor.Width,Cursor.Height);
   Result:=true;
 end;
 
@@ -351,30 +363,30 @@ begin
 end;
 
 
-function TdExampleExecuteCmd.MousePos(C:TControl):TPoint;
+function TdExampleExecuteCmd.MousePos(Cursor:TControl):TPoint;
 begin
-  Result :=Point(C.Left + C.Width div 2,C.Top + C.Height div 2);
+  Result :=Point(Cursor.Left + Cursor.Width div 2,Cursor.Top + Cursor.Height div 2);
 end;
 
-function TdExampleExecuteCmd.MouseClick(C:TControl;col,col2:TColor):boolean;
+function TdExampleExecuteCmd.MouseClick(Cursor:TControl;col,col2:TColor):boolean;
 begin
-    TLocControl(C).Color:= col;
+    TLocControl(Cursor).Color:= col;
     Delay(100);
-    TLocControl(C).Color:= col2;
+    TLocControl(Cursor).Color:= col2;
     Delay(100);
-    TLocControl(C).Color:= col;
+    TLocControl(Cursor).Color:= col;
     Delay(100);
-    TLocControl(C).Color:= col2;
+    TLocControl(Cursor).Color:= col2;
     Delay(100);
-    TLocControl(C).Color:= col;
+    TLocControl(Cursor).Color:= col;
     Delay(100);
-    TLocControl(C).Color:= col2;
+    TLocControl(Cursor).Color:= col2;
     Delay(100);
-    TLocControl(C).Color:= col;
+    TLocControl(Cursor).Color:= col;
     Delay(100);
-    TLocControl(C).Color:= col2;
+    TLocControl(Cursor).Color:= col2;
     Delay(100);
-    TLocControl(C).Color:= col;
+    TLocControl(Cursor).Color:= col;
     Delaystd;
     Result:= not self.Terminated;
 end;
@@ -486,7 +498,6 @@ begin
     if self.Terminated then
     exit;
     sleep(1);
-     //ShowMessage(inttostr(GetTickCount));
   end;
   Result:=true;
 end;

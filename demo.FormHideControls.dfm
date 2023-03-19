@@ -18,7 +18,7 @@ object FormHideControls: TFormHideControls
     Top = 0
     Width = 942
     Height = 605
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

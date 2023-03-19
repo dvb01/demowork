@@ -3,33 +3,60 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, AmComboBox, AmScrollBarTypes,
-  Vcl.StdCtrls, AmMemo, ES.BaseControls, ES.Layouts, AmLayBase, AmPanel,
-  AmPtPanel, AmEdit, AmCheckBox, AmButton, AmFormModal,AmFormBased, AmListBox,
-  AmUserScale,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
   Math,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.WinXCtrls,
+
+  IdContext,
+  IdSSLOpenSSL,
+  ES.BaseControls,
+  ES.Layouts,
+
+  AmSystemBase,
+  AmSystemObject,
+  AmUserType,
+  AmUserScale,
+  AmLayBase,
+  AmPanel,
+  AmPtPanel,
+  AmEdit,
+  AmCheckBox,
+  AmButton,
+  AmFormModal,
+  AmFormBased,
+  AmListBox,
+  AmComboBox,
+  AmScrollBarTypes,
   AmControls,
+  AmMemo,
+
+  AmWs.HandlerIO,
+  AmWs.Prt.Crt,
+  AmWs.Client.Http.BaseAbstract,
+  AmWs.Client.Http.Base,
+  AmWs.Client.Http.Crt,
+  AmWs.Server.Http.Base,
+  AmWs.Server.Context.Base,
+  AmWs.ReadWrite.Std1,
+  AmWs.ReadWrite.Base,
+  AmWs.ReadWrite.WebSocket,
+  AmWs.ReadWrite.Crt,
+  AmWs.Server.Http.Crt,
+  AmWs.Server.Dos,
+
   demo.Module.WebSocket.Baza,
-  demo.Module.WebSocket.Types,
-     AmSystemBase,
-     AmSystemObject,
-     AmUserType,
-     IdContext,
-     IdSSLOpenSSL,
-     AmWs.HandlerIO,
-     AmWs.Prt.Crt,
-     AmWs.Client.Http.BaseAbstract,
-     AmWs.Client.Http.Base,
-     AmWs.Client.Http.Crt,
-     AmWs.Server.Http.Base,
-     AmWs.Server.Context.Base,
-     AmWs.ReadWrite.Std1,
-     AmWs.ReadWrite.Base,
-     AmWs.ReadWrite.WebSocket,
-     AmWs.ReadWrite.Crt,
-     AmWs.Server.Http.Crt,
-     AmWs.Server.Dos, Vcl.ExtCtrls, Vcl.WinXCtrls;
+  demo.Module.WebSocket.Types ;
 
 
 type
@@ -319,17 +346,22 @@ begin
   try
       if Sender = P_Client_Class then
       Client.SocketClass:= P_Client_Class.ItemCaption
+
       else if Sender = P_Client_Url then
       Client.Url:= P_Client_Url.EditText
+
       else if Sender = P_Client_Proxy then
       Client.Url:= P_Client_Proxy.EditText
+
       else if Sender = P_Client_Ssl then
       Client.Ssl:= P_Client_Ssl.Checked
 
       else if Sender = P_Server_SocketClass then
       Server.SocketClass:= P_Server_SocketClass.ItemCaption
+
       else if Sender = P_Server_Port then
       Server.Port:= AmInt(P_Server_Port.EditText,0)
+
       else if Sender = P_Server_Ssl then
       Server.Ssl:= P_Server_Ssl.Checked
   finally
@@ -569,16 +601,7 @@ begin
 end;
 
 procedure TFormWebSocket.WsServerCanWriteEx(Sender:TObject;Ctx: TAmWsServerCtx_Base);
-//var
-  //  ip          : string;
-  //  port        : Integer;
-   // peerIP      : string;
-  //  peerPort    : Integer;
-
 begin
-   // ip        := Ctx.Binding.IP;
-   // peerIP    := Ctx.Binding.PeerIP;
-   // peerPort  := Ctx.Binding.PeerPort;
     ServerChangedListClientCall(true,Ctx.Binding.PeerIP,Ctx.Binding.PeerPort);
     ServerLogCall('SERVER', 'Client CanWrite '+Ctx.Binding.PeerIP+':'+AmStr(Ctx.Binding.PeerPort) );
 end;
@@ -714,15 +737,10 @@ begin
      AmDialog.ShowTimeOut('','Сообщение не отправлено! Нет соединения или параметры назначения пусты.'+S,10000);
      exit;
    end;
-  {
 
-    нужно создать соответствующий класс параметров для текушего класса контекста иначе бобо будет
-    т.к в этой демке можно переключатся меж классами
-    вся цепочка вызовов не должна вернуть nil проверку не делая т.к сам все писал
-    базовый класс не может делать read  write только наследеники
-  }
   ReturnIsCtx:=true;
   ReturnSend:=false;
+  //нужно создать соответствующий класс параметров для текущего класса контекста
   param:= FWsServer.ParamServer.ClassCtx.ClassReadWrite.ClassParamWrite.Create;
   param.msg_Stream:= TMemoryStream.Create;
   try
@@ -733,7 +751,7 @@ begin
 
 
     if param is TAmIoMsgParamWrite_WebSocket then
-    TAmIoMsgParamWrite_WebSocket(param).CodeType:=  wdcText  // отправляем текст по вебсокету
+    TAmIoMsgParamWrite_WebSocket(param).CodeType:=  wdcText  // указание что отправляем текст по вебсокету
     else if  Param is TAmIoMsgParamWrite_Crt then
     begin
       TAmIoMsgParamWrite_Crt(Param).prt.xCmd:=TAmWsPrtCrt.TCmd.None;
@@ -842,8 +860,7 @@ begin
   FWsClient.OnPingCustom:=     WsClientPing;
   FWsClient.OnPongCustom:=     WsClientPong;
 
-  // на практике эти события редко используются здесь демонстрация как с ними работать
-  // они могут выполнятся в отдельных потоках и их нужно синхронизировать
+  // на практике эти события редко используются но они есть
   {
   begin
     FWs.OnWriteBeforeMsg:= WSWriteBeforeMsg;
@@ -859,21 +876,23 @@ begin
   }
 
    FWsClient.ReconnectIsNeed:=true;
-  //задаем через какое время в сек чекать соединение и переподключатся
-  // посмотрите  TAmWsClientHttpBaseReconnect.SupConProc что бы понять логику ReconnectCheckSeconds
-  // важно выбрать такое время что  больще чем частота приема сообщений от сервера пинг эт тоже сообщение
-  // если пройдено больше времяни с последнего сообщения а сообщений новых нет эт один из пунктов что бы переподключится
-  //обычно код даж не доходит до этого костыля однако бывают случаи когда поток чтения зависает и тогда эт помогает не потерять связь с сервером
-  //<< поставил побольше т.к не знаю к какому серверу буду подключатся. разные серваки = разная частотность пинга
+  //задаем через какое время в сек чекать соединение и переподключаться
+  // смотрите  TAmWsClientHttpBaseReconnect.SupConProc что бы понять логику ReconnectCheckSeconds
+  // важно выбрать такое время что  больше  частоты приема сообщений от сервера пинг эт тоже сообщение
+  // если пройдено больше времени с последнего сообщения а сообщений новых нет эт один из пунктов выполнить Reconnect
+
+  //<< поставил побольше т.к не знаю к какому серверу буду подключатся. разные серверы = разная частотность пинга
+
   FWsClient.ReconnectCheckSeconds:=210;
 
 
 
-  // SSL.IsSll = true тогда перед конект создастся  наследник TIdSSLIOHandlerSocketOpenSSL  = TAmIoClientSSL
+  // SSL.IsSll = true тогда перед коннект создастся  наследник TIdSSLIOHandlerSocketOpenSSL  = TAmIoClientSSL
   // отредактировать его можно в событии WS.OnCreateIOHandler
   // см. TAmWsClientHttpBaseCustom.CreateIOHandler
 
    //sslvTLSv1,sslvTLSv1_1,sslvTLSv1_2  с другими видами шифрования лучше не работать  они ж устаревшие
+
   FWsClient.SSL.SLL_1_0 := P_Client_Ssl.Checked;
   FWsClient.SSL.SLL_1_1 := P_Client_Ssl.Checked;
   FWsClient.SSL.SLL_1_2 := P_Client_Ssl.Checked;
@@ -920,10 +939,8 @@ procedure TFormWebSocket.WsClientConnectedHeadAfterRead(Sender: TObject);
 begin
       //поток чтения еще не запущен
       //параметры чтения уже созданы они одни и не удаляются до close
+      // указание что не вести статистику о скорости и данных
       FWsClient.ReadWrite.bsReadParam.xStatistics.IsNeed:=false;
-      //так как read один то привязку к компоненту не будем делать как во write
-      // а визуалка уже создана когда нажимали кноку старт
-
 end;
 procedure TFormWebSocket.WsClientCanWriteEx(Sender: TObject);
 begin
@@ -945,8 +962,6 @@ begin
 end;
 procedure TFormWebSocket.WsClientLog(Sender: TObject;const Text: string; exception:Exception=nil);
 begin
-  //if Assigned(exception) then LogMain.LogError(Text,Sender,exception)
- // else
   ClientLogCall('LOG',false,Text);
 end;
 procedure TFormWebSocket.WsClientPing(S:Tobject;str:string;int:int64);
@@ -1009,7 +1024,7 @@ begin
         //т.к WS это ссылка на базовый класс а базовый класс не может отправлять и принемать
         //то нужно узнать класс параметров какой именно Ws мы создали
         //это действие актуально только для этой демки
-        //а в вашей реализации WS будет типизированным классом например WebSocket
+        //а в реальной реализации WS будет константным классом например WebSocket
         // hpClassParamWrite функция которая должная вернуть
         //класс своего параметра на запись выше TAmIoMsgParamWrite_Base
         // см так же           TAmIoMsgParam.GetClassWrite GetClassRead virtual;
@@ -1122,7 +1137,8 @@ begin
         if I=0 then
         begin
             // даже в лист потока не было добавлены Param поэтому сразу FreeAndNil
-            if Assigned(Param) then  FreeAndNil(Param);
+            if Assigned(Param) then
+            FreeAndNil(Param);
            // if Assigned(Panel) then  FreeAndNil(Panel);
 
             Showmessage('Не отправлено ошибка');
@@ -1134,7 +1150,7 @@ begin
         // см описание полей парметров Param в модуле их реализации и последущих классов наследников
         //начните с   TAmIoMsgParam
 
-        // дальше см. как удаляется Param: TAmIoMsgParamWrite_Base; в этой демке procedure WS_Write_Back
+        // дальше см. как удаляется Param: TAmIoMsgParamWrite_Base;
     end;
 
 end;
