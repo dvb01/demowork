@@ -37,13 +37,10 @@ uses
       function TimerStart(Proc:TNotifyEvent;Prm:TObject):TObject;
 
       procedure Run_Module_PhotoCollage;virtual;abstract;
-
       procedure Run_Module_ScrollBoxPto;virtual;abstract;
-
       procedure Run_Module_WebSocket;virtual;
       procedure Run_Module_WebSocket_Local;virtual;abstract;
       procedure Run_Module_WebSocket_Remote;virtual;abstract;
-
       procedure Run_Module_ApiVk;virtual;abstract;
      public
       constructor Create(AOwner:TComponent); override;
@@ -57,7 +54,6 @@ uses
      protected
         procedure Run_Module_PhotoCollage;override;
         procedure Run_Module_PhotoCollage_LoadFile;
-
         procedure Run_Module_ScrollBoxPto;override;
         procedure Run_Module_WebSocket_Local;override;
         procedure Run_Module_WebSocket_Remote;override;
@@ -81,17 +77,13 @@ uses
      protected
        function GetThreadTerminated():boolean; override;
        function CallMove(C:TControl;EffectClick:boolean;Caption:string):boolean;
-
        procedure Run_Module_PhotoCollage;override;
-
        procedure Run_Module_ScrollBoxPto;override;
-
        procedure Run_Module_WebSocket_Local;override;
        procedure Run_Module_WebSocket_Remote;override;
        procedure Run_Module_WebSocket_Client(Url:string);
        procedure Run_Module_WebSocket_MessageServerToClient(Text:string);
        procedure Run_Module_WebSocket_MessageServerToClient_FormModal(Prm:TObject);
-
        procedure Run_Module_ApiVk;override;
      public
       constructor Create(AOwner:TComponent);override;
@@ -105,7 +97,9 @@ uses
      demo.Example.Main,
      demo.Main.Form,
      demo.Module.WebSocket.Form;
+
 var  FCurrentRun:TdExampleRunBase = nil;// проигрывание анимации только по очереди
+
 function FormMain:TFormMain;
 begin
    Result:= demo.Main.Form.FormMain;
@@ -197,7 +191,6 @@ begin
    FPanelLock:=TAmLayout.Create(Self);
    FPanelLock.TransparentLevel:=10;
    FPanelLock.BevelOuter:=bvnone;
-  // FPanelLock.Color:=clblack;
    FPanelLock.Parent:= FormMain;
 
 
@@ -314,9 +307,6 @@ begin
    S:='Сохраните свой код локально. При повторных запусках загрузится именно ваш код. ';
    R:= Cmd.ShowMessage(S,FormMain.P_ApiVk_TextCodeSave,7000);
    if not R then exit;
-
-
-
 end;
 
 procedure TdExampleRunPlayer.Run_Module_PhotoCollage;
@@ -392,25 +382,9 @@ begin
    '2. Перетаскивайте элементы.'  +#13#10+
    '3. Скрольте выбирая скрости прокрутки.'  +#13#10+
    #13#10+
-   'Откройте окно настроек скрол бара, нажав на него ПКМ.'
-
-   ;
+   'Откройте окно настроек скрол бара, нажав на него ПКМ.';
    R:= Cmd.ShowMessage(S,FormMain.P_ScrollBoxPto_Panel,12000);
    if not R then exit;
-
-
-   exit;
-   Cmd.EditSetText(FormMain.P_ScrollBoxPto_DeleteIndexValue,'0');
-   Cmd.delay(50);
-   Cmd.EditSetText(FormMain.P_ScrollBoxPto_ScrollPosValue,'0');
-   Cmd.delay(50);
-
-
-
-   Cmd.CheckBoxSet(FormMain.P_ScrollBoxPto_ScrollPosIsAnimated,false);
-   Cmd.delay(50);
-   Cmd.ButtonClick(FormMain.P_ScrollBoxPto_Add);
-
 end;
 
 procedure TdExampleRunPlayer.Run_Module_WebSocket_Local;

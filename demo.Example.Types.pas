@@ -1,6 +1,7 @@
 ﻿unit demo.Example.Types;
 
 interface
+
 uses
   Winapi.Windows,
   Winapi.Messages,
@@ -10,97 +11,74 @@ uses
   Math,
   Vcl.Graphics,
   Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
   Vcl.ExtCtrls,
   AmPanel,
   AmSystemBase,
   AmSystemObject,
-  AmUserType,
   AmUserScale,
   AmControlClasses,
-  AmGraphic.Help,
-  AmGraphic.Canvas.Help,
   AmHookApp,
   AmLayCursor,
-  demo.Types,
-  demo.Consts;
+  demo.Types;
 
-  type
-  TdPanelExample = class (TAmPanel)
-    private
-      FWasFocus:boolean;
-      procedure SetPosFerst;
-    protected
-      procedure SetParent(W:TWinControl);override;
-      procedure VisibleChanging;override;
-      procedure MouseLeave;override;
-      procedure MouseEnter;override;
-      procedure MouseEnterTransparentLevel;virtual;
-      procedure MouseLeaveTransparentLevel;virtual;
-      procedure AlignBoundsCenter;
-      procedure AlignBoundsBottom;
-    public
-      constructor Create(AOwner:TComponent);override;
-      destructor Destroy;override;
-
-      procedure AlignBoundsCustom;virtual;
-  end;
-  TdButRunExample = class (TdPanelExample)
-   public
-     constructor Create(AOwner:TComponent);override;
-  end;
-  TdButAbortExample = class (TdPanelExample)
-   private
-   protected
-      procedure MouseEnterTransparentLevel;override;
-      procedure MouseLeaveTransparentLevel;override;
-   public
-     constructor Create(AOwner:TComponent);override;
-     procedure AlignBoundsCustom;override;
+type
+  TdPanelExample = class(TAmPanel)
+  private
+    FWasFocus: boolean;
+    procedure SetPosFerst;
+  protected
+    procedure SetParent(W: TWinControl); override;
+    procedure VisibleChanging; override;
+    procedure MouseLeave; override;
+    procedure MouseEnter; override;
+    procedure MouseEnterTransparentLevel; virtual;
+    procedure MouseLeaveTransparentLevel; virtual;
+    procedure AlignBoundsCenter;
+    procedure AlignBoundsBottom;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure AlignBoundsCustom; virtual;
   end;
 
-  TdPanelExampleCursor = class (TAmCursorImit)
-    private
-    FCursorColor: TColor;
-    procedure CursorColorSet(const Value: TColor);
-    protected
-      procedure Paint(Sender:TObject;Canvas:TCanvas;Rect:TRect;Var CanContinue:boolean);override;
-    public
-      constructor Create(AOwner:TComponent);override;
-    published
+  TdButRunExample = class(TdPanelExample)
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
+
+  TdButAbortExample = class(TdPanelExample)
+  private
+  protected
+    procedure MouseEnterTransparentLevel; override;
+    procedure MouseLeaveTransparentLevel; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure AlignBoundsCustom; override;
+  end;
+
+  TdPanelExampleCursor = class(TAmCursorImit)
+  public
+    constructor Create(AOwner: TComponent); override;
   end;
 
   TdTimerExampleRun = class(TTimer)
-   private
-     FProc:TNotifyEvent;
-     FPrm:TObject;
-    procedure TimerEvent(S:TObject);
-   public
-     procedure Start(Proc:TNotifyEvent;Prm:TObject);
-     constructor Create(AOwner:TComponent);override;
+  private
+    FProc: TNotifyEvent;
+    FPrm: TObject;
+    procedure TimerEvent(S: TObject);
+  public
+    procedure Start(Proc: TNotifyEvent; Prm: TObject);
+    constructor Create(AOwner: TComponent); override;
   end;
-
-
-
-
-
-
-
-
 
 implementation
 
-
-
 { TdPanelExample }
-
-
 
 constructor TdPanelExample.Create(AOwner: TComponent);
 begin
   inherited;
-  FWasFocus:=false;
+  FWasFocus := false;
   Width := 330;
   Height := 127;
   Font.Charset := DEFAULT_CHARSET;
@@ -108,7 +86,7 @@ begin
   Font.Height := -16;
   Font.Name := 'Tahoma';
   Font.Style := [];
-  ParentFont := False;
+  ParentFont := false;
   BevelWidth := 3;
   GrandientOpt.Active := True;
   GrandientOpt.Kind := amgrRadial;
@@ -121,9 +99,9 @@ begin
   VisibleTyp := waBLEND;
   VisibleDelay := 70;
   VisibleCountFrame := 10;
-  Caption:='Пример';
-  self.Visible:=false;
-  self.Align:=alCustom;
+  Caption := 'Пример';
+  self.Visible := false;
+  self.Align := alCustom;
 
 end;
 
@@ -141,7 +119,7 @@ end;
 
 procedure TdPanelExample.MouseEnterTransparentLevel;
 begin
-   TransparentLevel:=255;
+  TransparentLevel := 255;
 end;
 
 procedure TdPanelExample.MouseLeave;
@@ -152,15 +130,15 @@ end;
 
 procedure TdPanelExample.MouseLeaveTransparentLevel;
 begin
-   TransparentLevel:=220;
+  TransparentLevel := 220;
 end;
 
 procedure TdPanelExample.SetParent(W: TWinControl);
 begin
   inherited;
-  if (W<>nil) and not  FWasFocus then
+  if (W <> nil) and not FWasFocus then
   begin
-    FWasFocus:=true;
+    FWasFocus := True;
     SetPosFerst;
     AlignBoundsCustom;
   end;
@@ -173,49 +151,42 @@ end;
 
 procedure TdPanelExample.AlignBoundsBottom;
 begin
-   if (Parent = nil) then exit;
-   self.SetBounds(
-         Parent.Width div 2 - self.Width div 2,
-         (Parent.Height - Parent.Height div 10) - self.Height ,
-         Width,
-         Height);
+  if (Parent = nil) then
+    exit;
+  self.SetBounds(Parent.Width div 2 - self.Width div 2,
+    (Parent.Height - Parent.Height div 10) - self.Height, Width, Height);
 end;
 
 procedure TdPanelExample.AlignBoundsCenter;
 begin
-   if (Parent = nil) then exit;
-   self.SetBounds(
-         Parent.Width div 2 - self.Width div 2,
-         Parent.Height div 2 - self.Height div 2,
-         Width,
-         Height);
+  if (Parent = nil) then
+    exit;
+  self.SetBounds(Parent.Width div 2 - self.Width div 2,
+    Parent.Height div 2 - self.Height div 2, Width, Height);
 end;
 
 procedure TdPanelExample.AlignBoundsCustom;
 begin
-    AlignBoundsCenter;
+  AlignBoundsCenter;
 end;
 
 procedure TdPanelExample.VisibleChanging;
 begin
   inherited;
   if not Visible then
-  AlignBoundsCustom;
+    AlignBoundsCustom;
 end;
-
 
 { TdButRunExample }
 
 constructor TdButRunExample.Create(AOwner: TComponent);
 begin
   inherited;
-  Width:= 108;
-  Height:= 41;
+  Width := 108;
+  Height := 41;
 end;
 
 { TdButAbortExample }
-
-
 
 constructor TdButAbortExample.Create(AOwner: TComponent);
 begin
@@ -227,9 +198,9 @@ begin
   ColorBolder := $008080FF;
   ColorBolder2 := $008080FF;
   TransparentLevel := 120;
-  self.Caption:='Отмена';
-  Width:= 108;
-  Height:= 41;
+  self.Caption := 'Отмена';
+  Width := 108;
+  Height := 41;
 end;
 
 procedure TdButAbortExample.AlignBoundsCustom;
@@ -239,68 +210,43 @@ end;
 
 procedure TdButAbortExample.MouseEnterTransparentLevel;
 begin
-  TransparentLevel:=255;
+  TransparentLevel := 255;
 end;
 
 procedure TdButAbortExample.MouseLeaveTransparentLevel;
 begin
-  TransparentLevel:=120;
+  TransparentLevel := 120;
 end;
 
 { TdPanelExampleCursor }
 
-
-
-
 constructor TdPanelExampleCursor.Create(AOwner: TComponent);
 begin
   inherited;
-  //Color:=$008080FF;;
-  //Color:=clgray;
-  //self.TransparentColor:=clgray;
-  //self.TransparentLevel:=120;
-  //self.BevelOuter:=bvNone;
-  //self.IsDrawHelper:=false;
 end;
-
-
-procedure TdPanelExampleCursor.CursorColorSet(const Value: TColor);
-begin
-  FCursorColor := Value;
-end;
-
-procedure TdPanelExampleCursor.Paint(Sender:TObject;Canvas:TCanvas;Rect:TRect;Var CanContinue:boolean);
-begin
- //Canvas.Brush.Color:= clred;
- //Canvas.Brush.Style:=bsSolid;
- //Canvas.FillRect(self.ClientRect);
- //AmGraphicCanvasHelp.CanvasPaintCircleMark(Canvas,self.ClientRect,clgreen,5,5);
-end;
-
-
 
 { TdTimerExampleRun }
 
 constructor TdTimerExampleRun.Create(AOwner: TComponent);
 begin
   inherited;
-  self.Interval:=50;
-  self.OnTimer:= TimerEvent;
-  self.Enabled:=false;
+  self.Interval := 50;
+  self.OnTimer := TimerEvent;
+  self.Enabled := false;
 end;
 
-procedure TdTimerExampleRun.Start(Proc: TNotifyEvent;Prm:TObject);
+procedure TdTimerExampleRun.Start(Proc: TNotifyEvent; Prm: TObject);
 begin
-   FProc:=Proc;
-   FPrm:=Prm;
-   self.Enabled:=true;
+  FProc := Proc;
+  FPrm := Prm;
+  self.Enabled := True;
 end;
 
 procedure TdTimerExampleRun.TimerEvent(S: TObject);
 begin
-   self.Enabled:=false;
-   if Assigned(FProc) then
-   FProc(FPrm);
+  self.Enabled := false;
+  if Assigned(FProc) then
+    FProc(FPrm);
 end;
 
 end.

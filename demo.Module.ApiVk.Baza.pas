@@ -31,14 +31,14 @@ uses
     function HideFormResponseGet: boolean;
     procedure HideFormResponseSet(const Value: boolean);
   public
+    constructor Create(AObj:TJsonObject);
+    destructor  Destroy;Override;
     property IsInit: boolean read IsInitGet write IsInitSet;
     property TextCodeWasDefaultSetter: boolean read TextCodeWasDefaultSetterGet write TextCodeWasDefaultSetterSet;
     property TextCode: string read TextCodeGet write TextCodeSet;
     property TokenApiVk: string read TokenApiVkGet write TokenApiVkSet;
     property TextCodeAutoSave: boolean read TextCodeAutoSaveGet write TextCodeAutoSaveSet;
     property HideFormResponse: boolean read HideFormResponseGet write HideFormResponseSet;
-    constructor Create(AObj:TJsonObject);
-    destructor  Destroy;Override;
   end;
 
 
