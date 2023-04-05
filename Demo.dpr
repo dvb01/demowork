@@ -3,7 +3,7 @@
 {$R *.dres}
 
 uses
-//  AMMMSTART,
+ // AMMMSTART,
   Vcl.Forms,
   AmUsertype,
   demo.Main.Form in 'demo.Main.Form.pas' {FormMain},
